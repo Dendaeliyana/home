@@ -1,1 +1,96 @@
-project pertama saya
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Pulsa Express</title>
+    </head>
+<body>
+
+    <header>
+        <nav>
+            <h1>Pulsa Express</h1>
+            <ul>
+                <li><a href="#home">Dashboard</a></li>
+                <li><a href="#beli">Beli Pulsa</a></li>
+                <li><a href="#riwayat">Riwayat Transaksi</a></li>
+                <li><a href="#profil">Profil</a></li>
+                <li><a href="#keluar">Keluar</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Selamat Datang, [Nama Pengguna]!</h2>
+
+        <section id="informasi-akun">
+            <h3>Informasi Akun</h3>
+            <div>
+                <div class="card">
+                    <h4>💰 Saldo Anda</h4>
+                    <p class="saldo">Rp 50.000</p>
+                    <button>Isi Saldo</button>
+                </div>
+                <div class="card">
+                    <h4>⭐ Poin Anda</h4>
+                    <p class="poin">150 Poin</p>
+                    <button>Tukar Poin</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="transaksi-cepat">
+            <h3>🚀 Transaksi Cepat</h3>
+            <form action="#" method="post">
+                <label for="nomor_hp">Nomor Telepon:</label>
+                <input type="tel" id="nomor_hp" name="nomor_hp" placeholder="Contoh: 081234567890" required>
+                
+                <label for="produk">Pilih Produk:</label>
+                <select id="produk" name="produk" required>
+                    <option value="">-- Pilih Produk --</option>
+                    <option value="pulsa10">Pulsa 10.000</option>
+                    <option value="data25">Paket Data 25 GB</option>
+                    <option value="token50">Token Listrik 50.000</option>
+                </select>
+                
+                <button type="submit">Beli Sekarang</button>
+            </form>
+        </section>
+
+        <section id="riwayat-terbaru">
+            <h3>⏱️ Riwayat Terbaru</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Produk</th>
+                        <th>Nomor Tujuan</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>10/12/2025</td>
+                        <td>Pulsa 5.000</td>
+                        <td>0812xxxxxx</td>
+                        <td>Sukses</td>
+                    </tr>
+                    <tr>
+                        <td>09/12/2025</td>
+                        <td>Token 20.000</td>
+                        <td>1234xxxxxx</td>
+                        <td>Gagal</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><a href="#riwayat">Lihat Semua Riwayat</a></p>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Pulsa Express | Semua Hak Dilindungi</p>
+    </footer>
+
+    </body>
+</html>
