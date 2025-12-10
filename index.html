@@ -4,251 +4,158 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Denda Celuler</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome untuk Ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'edu-blue': '#1e3a8a', // Biru tua header
-                        'edu-light-blue': '#3b82f6',
-                        'edu-orange': '#f59e0b', // Warna tombol
-                        'edu-dark-overlay': 'rgba(30, 41, 59, 0.85)', // Overlay kotak teks
-                    },
-                    fontFamily: {
-                        sans: ['Roboto', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
-        /* Custom Styles untuk visual spesifik */
-        .hero-bg {
-            /* Background pattern siluet orang */
-            background-color: #f0f9ff;
-            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkhKTWOdKt8_X4b9TAvU4vb67Z3TFvPV6gl-OMT1_fxQ&s=10');
-            background-size: cover;
-            background-position: center;
-            background-blend-mode: overlay;
+        /* CSS Dasar untuk latar belakang hitam dan teks putih */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Gaya untuk logo */
+        .logo-container {
+            margin-bottom: 20px;
+        }
+        .logo {
+            width: 80px; /* Ukuran perkiraan */
+            height: 80px;
+            background-color: #e3000f; /* Warna merah perkiraan untuk logo */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Anda akan mengganti ini dengan tag <img> untuk logo sebenarnya */
+            font-size: 40px;
+            font-weight: bold;
+            border: 3px solid #fff; /* Garis putih di sekitar logo */
+        }
+
+        /* Gaya untuk teks utama */
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 300px;
+        }
+
+        /* Gaya untuk tombol navigasi */
+        .nav-button {
+            width: 100%;
+            max-width: 350px;
+            background-color: #333; /* Warna abu-abu gelap untuk tombol */
+            color: #fff;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .button-content {
+            display: flex;
+            align-items: center;
+        }
+
+        .button-icon {
+            margin-right: 15px;
+            font-size: 24px;
+            width: 30px; /* Lebar tetap untuk ikon */
+            text-align: center;
+        }
+
+        .more-icon {
+            font-size: 20px;
         }
         
-        .clip-path-slant {
-            clip-path: polygon(0 0, 100% 0, 95% 100%, 0% 100%);
+        /* Gaya untuk bagian footer/media sosial */
+        .social-links {
+            position: fixed;
+            bottom: 20px;
+            display: flex;
+            gap: 25px;
         }
-
-        /* Animasi halus untuk tombol */
-        .btn-hover {
-            transition: all 0.3s ease;
-        }
-        .btn-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .social-link {
+            color: #fff;
+            font-size: 28px;
+            text-decoration: none;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body class="font-sans text-slate-800 antialiased overflow-x-hidden">
+<body>
 
-    <!-- TOP BAR -->
-    <div class="bg-slate-800 text-white text-xs py-2">
-        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
-            <div class="flex items-center space-x-4 mb-2 md:mb-0">
-                <span class="flex items-center"><i class="fas fa-phone-alt mr-2 text-edu-orange"></i> HOTLINE : +62857 123 456</span>
-                <span class="hidden md:inline">|</span>
-                <span class="flex items-center"><i class="fas fa-envelope mr-2 text-edu-orange"></i> EMAIL : alimrugi@.co.id</span>
+    <div class="logo-container">
+        <div class="logo">
             </div>
-            <div class="flex items-center space-x-4">
-                <a href="#" class="hover:text-edu-orange transition"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="hover:text-edu-orange transition"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="hover:text-edu-orange transition"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="hover:text-edu-orange transition"><i class="fab fa-youtube"></i></a>
-            </div>
-        </div>
     </div>
 
-    <!-- NAVBAR -->
-    <nav class="bg-slate-700/50 backdrop-blur-md md:bg-transparent absolute top-[36px] w-full z-50 border-b border-white/20 md:border-none">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center h-20">
-                
-                <!-- Logo Area (Background Putih Miring) -->
-                <div class="relative bg-white h-24 w-72 -ml-4 pl-8 pr-12 flex items-center shadow-lg clip-path-slant hidden md:flex top-0 absolute z-50">
-                    <div class="flex items-center gap-2">
-                        <div class="text-edu-orange text-4xl">
-                            <i class="fas fa-shapes"></i>
-                        </div>
-                        <div class="flex flex-col">
-                            <span class="text-2xl font-bold text-edu-light-blue leading-tight">Denda </span>
-                            <span class="text-sm font-semibold text-slate-500 tracking-widest uppercase">Store Cell</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="title">Denda Celuler</div>
+    <div class="subtitle">
+        Tempat Belanja Kuota Internet, Pulsa All Operator, Token PLN, Game Lengkap.
+    </div>
 
-                <!-- Mobile Logo -->
-                <div class="flex md:hidden items-center gap-2">
-                    <div class="text-edu-orange text-2xl">
-                        <i class="fas fa-shapes"></i>
-                    </div>
-                    <span class="text-xl font-bold text-white">Denda Store Cell</span>
-                </div>
-
-                <!-- Navigation Links -->
-                <div class="hidden md:flex space-x-6 items-center ml-auto">
-                    <a href="https://dendaeliyana.github.io/Home" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">HOME</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">ABOUT US</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">OUR SERVICES</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">OUR TEAMS</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">GALLERY</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">CONTACT US</a>
-                    <a href="#" class="text-white hover:text-edu-orange font-medium text-sm transition shadow-sm drop-shadow-md">EVENTS</a>
-                    <button class="text-white hover:text-edu-orange transition"><i class="fas fa-search"></i></button>
-                </div>
-
-                <!-- Mobile Menu Button -->
-                <button id="mobile-menu-btn" class="md:hidden text-white text-2xl">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
+    <button class="nav-button">
+        <div class="button-content">
+            <span class="button-icon"><i class="fas fa-handshake"></i></span>
+            Daftar Jadi Agen Pulsa
         </div>
-        
-        <!-- Mobile Menu Dropdown -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 text-white p-4 absolute w-full top-20 shadow-xl">
-            <a href="https://dendaeliyana.github.io/Home" class="block py-2 hover:text-edu-orange border-b border-slate-700">HOME</a>
-            <a href="#" class="block py-2 hover:text-edu-orange border-b border-slate-700">ABOUT US</a>
-            <a href="#" class="block py-2 hover:text-edu-orange border-b border-slate-700">OUR SERVICES</a>
-            <a href="#" class="block py-2 hover:text-edu-orange border-b border-slate-700">OUR TEAMS</a>
-            <a href="#" class="block py-2 hover:text-edu-orange border-b border-slate-700">GALLERY</a>
-            <a href="#" class="block py-2 hover:text-edu-orange border-b border-slate-700">CONTACT US</a>
-            <a href="#" class="block py-2 hover:text-edu-orange">EVENTS</a>
+        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
+    </button>
+
+    <button class="nav-button">
+        <div class="button-content">
+            <span class="button-icon" style="color: #ff69b4;"><i class="fas fa-book-open"></i></span>
+            buku konter
         </div>
-    </nav>
+        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
+    </button>
 
-    <!-- HERO SECTION -->
-    <section class="hero-bg relative min-h-[600px] md:h-screen flex items-center pt-24 md:pt-0 overflow-hidden">
-        <!-- Blue Overlay Gradient -->
-        <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-blue-200/50"></div>
-        
-        <div class="container mx-auto px-4 relative z-10 h-full flex items-center">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 w-full items-center">
-                
-                <!-- Left Content Area (Globe & Text Box) -->
-                <div class="col-span-1 md:col-span-6 lg:col-span-5 relative">
-                    
-                    <!-- Decorative Globe & Books Illustration (CSS + Icon Composite) -->
-                    <div class="relative w-full max-w-md mx-auto md:mx-0 mb-[-40px] md:mb-[-80px] z-0 opacity-90">
-                        <!-- Globe Image Placeholder -->
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkhKTWOdKt8_X4b9TAvU4vb67Z3TFvPV6gl-OMT1_fxQ&s=10" 
-                             alt="Education Globe" 
-                             class="w-64 h-auto mx-auto md:ml-10 drop-shadow-2xl mix-blend-multiply"
-                             onerror="this.src='https://placehold.co/300x300/png?text=Globe+Icon'">
-                    </div>
-
-                    <!-- Main Dark Text Box -->
-                    <div class="bg-slate-800/90 text-white p-6 md:p-8 rounded-lg shadow-2xl backdrop-blur-sm relative z-10 w-full max-w-lg mx-auto md:mx-0 mt-4 md:mt-0 transform md:-translate-y-12">
-                        <h1 class="text-2xl md:text-3xl font-light leading-snug mb-2">
-                            Lembaga Percobaan<br>
-                            <span class="font-bold">Pelatihan Terpercaya</span>
-                        </h1>
-                        <p class="text-slate-300 text-sm mb-6 border-l-4 border-edu-orange pl-3">
-                            PT Alim Rugi
-                        </p>
-                        
-                        <div class="flex space-x-3">
-                            <button class="bg-edu-orange hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full text-sm shadow-lg btn-hover w-32">
-                                Sinergi
-                            </button>
-                            <button class="bg-edu-orange hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-full text-sm shadow-lg btn-hover w-32">
-                                Edukasi
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-
-                <!-- Right Content Area (Business Illustration) -->
-                <div class="hidden md:block col-span-1 md:col-span-6 lg:col-span-7 h-full relative">
-                     <!-- Illustration of connection/handshake (using font awesome big icons as placeholder or CSS composition) -->
-                     <div class="absolute right-0 top-1/2 -translate-y-1/2 opacity-80 pointer-events-none">
-                         <!-- Visual representation of networking/handshake -->
-                         <div class="flex items-end space-x-4">
-                            <!-- Silhouette 1 -->
-                            <div class="text-slate-400 opacity-50 transform scale-150">
-                                <i class="fas fa-user-tie text-[150px]"></i>
-                            </div>
-                             <!-- Handshake center -->
-                             <div class="text-blue-900 opacity-60 z-10 transform scale-125 mb-10">
-                                <i class="fas fa-handshake text-[120px]"></i>
-                            </div>
-                            <!-- Silhouette 2 -->
-                            <div class="text-slate-400 opacity-50 transform scale-150 -scale-x-100">
-                                <i class="fas fa-user-tie text-[150px]"></i>
-                            </div>
-                         </div>
-                     </div>
-                </div>
-
-            </div>
+    <button class="nav-button">
+        <div class="button-content">
+            <span class="button-icon"><i class="fas fa-paper-plane"></i></span>
+            Template Digital / Sosmed
         </div>
-
-        <!-- Floating Logo at bottom rightish -->
-        <div class="absolute bottom-10 right-10 hidden lg:block animate-pulse">
-            <div class="flex items-center gap-2 opacity-80">
-                <div class="text-edu-orange text-5xl">
-                    <i class="fas fa-shapes"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-3xl font-bold text-slate-600 leading-tight">edutraining</span>
-                    <span class="text-sm font-semibold text-slate-400 tracking-widest uppercase text-right">Indonesia</span>
-                </div>
-            </div>
+        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
+    </button>
+    
+    <button class="nav-button">
+        <div class="button-content">
+            <span class="button-icon"><i class="fas fa-ban"></i></span>
+            Tempat Promosi
         </div>
-    </section>
+        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
+    </button>
 
-    <!-- Floating WhatsApp Button -->
-    <a href="https://wa.me/6282111513337" target="_blank" class="fixed bottom-6 left-6 z-50 bg-green-500 hover:bg-green-600 text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-transform hover:scale-110 animate-bounce cursor-pointer" title="Hubungi Kami via WhatsApp">
-        <i class="fab fa-whatsapp text-3xl"></i>
-    </a>
-
-    <!-- Footer Simple Strip -->
-    <footer class="bg-slate-900 text-slate-400 py-6 text-center text-sm relative z-20">
-        <div class="container mx-auto">
-            <p>&copy; 2024 Hnaya website percobaan</p>
+    <button class="nav-button">
+        <div class="button-content">
+            <span class="button-icon"><i class="fas fa-image"></i></span>
+            Template Poster
         </div>
-    </footer>
+        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
+    </button>
 
-    <!-- Script for Interactivity -->
-    <script>
-        // Mobile Menu Toggle
-        const btn = document.getElementById('mobile-menu-btn');
-        const menu = document.getElementById('mobile-menu');
+    <div class="social-links">
+        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fas fa-envelope"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+    </div>
 
-        btn.addEventListener('click', () => {
-            menu.classList.toggle('hidden');
-        });
-
-        // Add header scroll effect
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 50) {
-                nav.classList.add('bg-slate-800/90');
-                nav.classList.remove('md:bg-transparent');
-                nav.classList.remove('border-b');
-            } else {
-                nav.classList.remove('bg-slate-800/90');
-                nav.classList.add('md:bg-transparent');
-                nav.classList.add('border-b');
-            }
-        });
-    </script>
 </body>
 </html>
