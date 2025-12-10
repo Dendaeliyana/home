@@ -3,79 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DENDA CELULER | Beranda</title>
-    <link rel="stylesheet" href="css/style.css"> <link rel="icon" type="image/png" href="images/favicon.png"> <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Edutraining Indonesia | Beranda</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Definisi Warna */
+            --color-primary: #ff8c00; /* Oranye untuk Aksen */
+            --color-secondary: #ffd700; /* Emas/Kuning */
+            --color-dark: #333;
+            --color-light: #fff;
+            --color-whatsapp: #25D366;
+        }
+
+        /* --- Dasar & Utility --- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f8f8f8;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* Tombol CTA */
+        .btn {
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 700;
+            transition: background-color 0.3s;
+            display: inline-block;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .btn-sinergi {
+            background-color: var(--color-primary); 
+            color: var(--color-light);
+            margin-right: 15px;
+        }
+
+        .btn-edukasi {
+            background-color: var(--color-secondary); 
+            color: var(--color-dark);
+        }
+
+        /* --- 1. TOP BAR --- */
+        .top-bar {
+            background-color: var(--color-dark);
+            color: var(--color-light);
+            font-size: 13px;
+            padding: 5px 0;
+        }
+
+        .top-bar .container {
+            justify-content: space-between;
+        }
+
+        .contact-info span {
+            margin-right: 20px;
+        }
+
+        .contact-info i, .social-links i {
+            color: var(--color-secondary);
+            margin-right: 5px;
+        }
+
+        .social-links a {
+            color: var(--color-light);
+            margin-left: 10px;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        /* --- 2. HEADER & NAVIGATION BAR --- */
+        .main-header {
+            background-color: var(--color-light);
+            padding: 10px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .main-header .container {
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 40px; 
+            margin-right: 10px;
+        }
+
+        .main-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+
+        .main-nav ul li a {
+            text-decoration: none;
+            color: var(--color-dark);
+            padding: 20px 15px;
+            display: block;
+            font-weight: 500;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .main-nav ul li a.active,
+        .main-nav ul li a:hover {
+            color: var(--color-primary); 
+            border-bottom: 3px solid var(--color-primary);
+        }
+
+        .search-icon {
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--color-dark);
+            padding: 0 10px;
+        }
+        
+        /* Menyembunyikan Navigasi di Mobile (Contoh Sederhana) */
+        @media (max-width: 992px) {
+            .main-nav {
+                display: none;
+            }
+            .search-icon {
+                margin-left: auto;
+            }
+        }
+
+        /* --- 3. HERO SECTION (Kunci Desain) --- */
+        .hero-section {
+            position: relative;
+            height: 550px; /* Atur ketinggian */
+            overflow: hidden;
+            color: var(--color-light);
+        }
+        
+        /* Latar Belakang Siluet */
+        .hero-bg-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Ganti dengan gambar siluet dari gambar Anda */
+            background: url('placeholder-silhouette-bg.jpg') no-repeat center center; 
+            background-size: cover;
+            opacity: 0.8; 
+            z-index: 1;
+            /* Memberi gradien biru tipis untuk menyamai gambar */
+            background-blend-mode: multiply;
+            background-color: rgba(0, 0, 80, 0.1); 
+        }
+
+        .hero-content-wrapper {
+            position: relative;
+            height: 100%;
+            align-items: flex-start; 
+            padding-top: 50px;
+            z-index: 2; 
+        }
+
+        .hero-content-left {
+            flex: 0 0 55%; /* Konten Kiri mendominasi 55% */
+            position: relative; /* Penting untuk penempatan ilustrasi */
+            height: 100%;
+            padding-top: 10px;
+        }
+        
+        /* Ilustrasi Topi Wisuda dan Buku */
+        .education-illustration {
+            /* Ganti dengan gambar topi wisuda dan buku dari gambar Anda */
+            content: url('placeholder-illustration.png'); 
+            width: 500px;
+            height: auto;
+            position: absolute;
+            left: 0;
+            bottom: 0; /* Letakkan di bagian bawah */
+            z-index: 3;
+            /* Perlu penyesuaian posisi yang akurat berdasarkan gambar asli */
+        }
+        
+        .content-box {
+            /* Membuat kotak konten tampak mengambang di atas ilustrasi */
+            position: absolute;
+            top: 100px; 
+            left: 100px;
+            width: 400px; 
+            background: rgba(0, 0, 0, 0.5); /* Background gelap transparan */
+            padding: 30px;
+            border-radius: 5px;
+            z-index: 4;
+        }
+
+        .content-box h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+
+        .company-name {
+            color: #ccc;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        /* Bagian Kanan Logo Besar */
+        .hero-content-right {
+            flex: 1;
+            height: 100%;
+            position: relative;
+        }
+
+        .large-logo-overlay {
+            /* Ganti dengan logo besar Edutraining dari gambar Anda */
+            content: url('placeholder-large-logo.png'); 
+            width: 300px; 
+            opacity: 0.1; 
+            position: absolute;
+            bottom: 50px; /* Jarak dari bawah */
+            right: 0;
+        }
+
+        /* --- 4. BOTTOM BAR (Bar Hijau WhatsApp) --- */
+        .bottom-bar {
+            background-color: var(--color-whatsapp); 
+            color: var(--color-light);
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .bottom-bar h3 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        /* Ikon WhatsApp Mengambang */
+        .whatsapp-fixed-icon {
+            position: fixed; 
+            bottom: 20px;
+            left: 20px;
+            background-color: var(--color-whatsapp);
+            color: var(--color-light);
+            padding: 15px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-size: 30px;
+            z-index: 999;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
 
+    <div class="top-bar">
+        <div class="container">
+            <div class="contact-info">
+                <span><i class="fas fa-phone-alt"></i> HOTLINE: +62821 1151 3337</span>
+                <span><i class="fas fa-envelope"></i> EMAIL: info@edutraining.id</span>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-google-plus-g"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
     <header class="main-header">
         <div class="container">
-            <h1 class="logo"><a href="#">Nama Brand</a></h1>
+            <div class="logo">
+                <img src="placeholder-logo-edutraining.png" alt="Edutraining Indonesia Logo">
+            </div>
             <nav class="main-nav">
                 <ul>
-                    <li><a href="https://dendaeliyana.github.io/Home" class="active">Beranda</a></li>
-                    <li><a href="layanan.html">Layanan</a></li>
-                    <li><a href="tentang.html">Tentang Kami</a></li>
-                    <li><a href="kontak.html" class="btn btn-primary">Kontak</a></li>
+                    <li><a href="#" class="active">HOME</a></li>
+                    <li><a href="#">ABOUT US</a></li>
+                    <li><a href="#">OUR SERVICES</a></li>
+                    <li><a href="#">OUR TEAMS</a></li>
+                    <li><a href="#">GALLERY</a></li>
+                    <li><a href="#">CONTACT US</a></li>
+                    <li><a href="#">EVENTS</a></li>
                 </ul>
-            </nav>
-            <button class="menu-toggle" aria-label="Toggle navigation">&#9776;</button>
-        </div>
-    </header>
-
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <p class="tagline">Solusi Digital Masa Depan</p>
-                <h2>Kami Membangun **Pengalaman** yang Mengesankan.</h2>
-                <p>Ubah ide Anda menjadi produk digital yang kuat dan menawan. Kami di sini untuk mewujudkannya.</p>
-                <a href="layanan.html" class="btn btn-cta">Lihat Layanan Kami</a>
-            </div>
-            <div class="hero-image">
-                <img src="images/hero-illustration.svg" alt="Ilustrasi Digital Modern">
-            </div>
-        </div>
-    </section>
-    
-    <section class="feature-section">
-        <div class="container">
-            <h3>Mengapa Memilih Kami?</h3>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <i class="icon-design"></i> <h4>Desain Modern</h4>
-                    <p>Antarmuka yang intuitif dan menarik, fokus pada pengalaman pengguna (UX).</p>
-                </div>
-                <div class="feature-item">
-                    <i class="icon-responsive"></i>
-                    <h4>Responsif Penuh</h4>
-                    <p>Tampilan yang sempurna di semua perangkat, mulai dari ponsel hingga desktop.</p>
-                </div>
-                <div class="feature-item">
-                    <i class="icon-fast"></i>
-                    <h4>Performa Cepat</h4>
-                    <p>Dioptimalkan untuk kecepatan pemuatan maksimal dan SEO yang unggul.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="cta-bar">
-        <div class="container">
-            <h4>Siap untuk Proyek Anda Berikutnya?</h4>
-            <a href="kontak.html" class="btn btn-secondary">Mulai Sekarang</a>
-        </div>
-    </section>
-
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; 2025 Nama Brand. Hak Cipta Dilindungi.</p>
-            <div class="social-links">
-                <a href="#"><i class="icon-twitter"></i></a>
-                <a href="#"><i class="icon-linkedin"></i></a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/script.js"></script> 
-</body>
-</html>
+            </
