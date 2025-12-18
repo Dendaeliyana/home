@@ -1,108 +1,158 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <link rel="icon" href="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png">
+<link rel="icon" href="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#FFE52A">
     <title>Denda Celuler</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Dasar untuk latar belakang hitam dan teks putih */
+        :root {
+            --yellow: #FFD700;
+            --blue: #0047AB;
+            --dark-blue: #003366;
+            --bg-color: #ffffff;
+        }
+
         body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-color);
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* Gaya untuk logo */
-        .logo-container {
-            margin-bottom: 20px;
-        }
-        .logo {
-            width: 80px; /* Ukuran perkiraan */
-            height: 80px;
-            img: url("https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png");
-            border-radius: 50%;
-            display: flex;
             justify-content: center;
-            align-items: center;
-            /* Anda akan mengganti ini dengan tag <img> untuk logo sebenarnya */
-            font-size: 40px;
-            font-weight: bold;
-            border: 3px solid #fff; /* Garis putih di sekitar logo */
         }
 
-        /* Gaya untuk teks utama */
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 30px;
-            max-width: 300px;
-        }
-
-        /* Gaya untuk tombol navigasi */
-        .nav-button {
+        .container {
+            max-width: 600px;
             width: 100%;
-            max-width: 350px;
-            background-color: #333; /* Warna abu-abu gelap untuk tombol */
-            color: #fff;
-            border: none;
-            padding: 15px 20px;
-            margin-bottom: 15px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            text-align: left;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            text-decoration: none;
+            position: relative;
         }
 
-        .button-content {
-            display: flex;
-            align-items: center;
-        }
-
-        .button-icon {
-            margin-right: 15px;
-            font-size: 24px;
-            width: 30px; /* Lebar tetap untuk ikon */
+        /* Header Styling */
+        .header {
             text-align: center;
+            margin-bottom: 50px;
+            padding: 0 2px;
         }
 
-        .more-icon {
-            font-size: 20px;
+        .header h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 32px;
+            color: var(--black);
+            text-shadow: 3px 3px var(--yellow);
+            margin: 0;
+            line-height: 1.0;
+            text-transform: capitalize;
+        }
+
+        /* Card Wrapper */
+        .card {
+            display: flex;
+            align-items: center;
+            border: 2px solid #000;
+            border-radius: 2px;
+            margin-bottom: 20px;
+            background: #fff;
+            position: relative;
+            min-height: 20px;
+        }
+
+        /* Logo Box (Kotak Miring) */
+        .logo-box {
+            width: 120px;
+            height: 120px;
+            background: #fff;
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: -20px;
+            transform: rotate(-5deg);
+            z-index: 2;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        /* Efek garis-garis sinar di belakang logo */
+        .logo-box::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: repeating-conic-gradient(from 0deg, #f0f0f0 0deg 10deg, transparent 10deg 20deg);
+            z-index: -1;
+        }
+
+        .logo-box img {
+            width: 40%;
+            height: auto;
+            transform: rotate(5deg); /* Mengimbangi miringnya kotak */
+        }
+
+        /* Content Styling */
+        .content {
+            padding: 15px 15px 15px 140px;
+            width: 100%;
+        }
+
+        /* Khusus untuk item kedua (Logo di kanan) */
+        .card.reverse {
+            flex-direction: row-reverse;
+        }
+
+        .card.reverse .logo-box {
+            left: auto;
+            right: -15px;
+            transform: rotate(5deg);
+        }
+
+        .card.reverse .content {
+            padding: 15px 140px 15px 20px;
+            text-align: left;
+        }
+
+        .promo-title {
+            font-weight: 700;
+            font-size: 10px;
+            color: #000;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .promo-desc {
+            font-size: 9px;
+            color: #444;
+            line-height: 1.4;
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 480px) {
+            .header h3 { font-size: 20px; }
+            .logo-box { width: 100px; height: 100px; left: -5px; }
+            .content { padding-left: 105px; }
+            .card.reverse .logo-box { right: -5px; }
+            .card.reverse .content { padding-right: 105px; }
         }
         
-        /* Gaya untuk bagian footer/media sosial */
-        .social-links {
+       /*dekorasi link*/
+       .btn-link {
+       text-decoration: none;
+       }
+   /* Gaya untuk bagian footer/media sosial */
+       .social-links {
             position: fixed;
             bottom: 20px;
             display: flex;
             gap: 25px;
-        }
-        .social-link {
-            color: #fff;
-            font-size: 28px;
-            text-decoration: none;
-        }
-        .fother {
-            color: #fff;
+            
+       .fother {
             font-size: 10px;
+            text-align: center;
             text-decoration: none;
         }
+        
         /* Floating WhatsApp Button (Opsional) */
         .whatsapp-float {
             position: fixed;
@@ -121,48 +171,71 @@
             z-index: 100;
             text-decoration: none;
         }
+        
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
+
+
+<div class="container">
+    <div class="header">
+    
     <div align="center">
-        <img src="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png" width="100" height="100">
+        <img src="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png" width="150" height="150">
     </div>
-
-    <div class="title">Denda Celuler</div>
-    <div class="subtitle">
-        Tempat Belanja Kuota Internet, Pulsa All Operator, Token PLN, Game Lengkap.
+    <div class="title"><h3>Denda Celuler</h3></div>
     </div>
-
-           <a href="https://orderkuota.com/reff/MK01" class="nav-button">
-         <div class="button-content">
-            <span class="button-icon"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFPIjE7b8PQzITZ8GjjFM0Jjz5zgjHI91o4PPeh1NDqw&s=10" width="25" height="25"></span>
-            Daftar Jadi Agen OrderKuota
+<a href="https://orderkuota.com/reff/MK01" class= "btn-link">
+    <div class="card">
+        <div class="logo-box">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFPIjE7b8PQzITZ8GjjFM0Jjz5zgjHI91o4PPeh1NDqw&s=10" alt="Logo K">
         </div>
-       <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
-           </a>
-
-     <a href="https://www.mediafire.com/file/wx0kv87lp98jmas/Buku_Konter.apk/file" class="nav-button">
-        <div class="button-content">
-            <span class="button-icon"><img src="https://ugc.production.linktr.ee/136d6d52-dbc6-40d3-a9f5-995b4035a4ac_20221231-063724.png?io=true&size=thumbnail-stack_v1_0" width="25" height="25"></span>
-            Aplikasi Buku Konter
+        <div class="content">
+            <div class="promo-title">KODE REFERRAL : MK01</div>
+            <div class="promo-desc">Aplikasi jual pulsa, kuota, token, dan injek voucher dan Kartu perdana semua operator.</div>
         </div>
-        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
-    </a>
+    </div></a>
 
-    <a href="https://support.propanaofficial.co.id/" class="nav-button">
-        <div class="button-content">
-            <span class="button-icon"><img src="https://freelogopng.com/images/all_img/1656733637logo-canva-png.png" width="25" height="25"></span>
-            Template Propana Reload
+   <a href="https://propanaofficial.co.id/apps/" class= "btn-link">
+    <div class="card reverse">
+        <div class="logo-box">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYOuKIhYx1Tc5RsFrGSnFGAZ9zDfCcaDoGBqP9ikE1Xg&s=10" alt="Logo BukuAgen">
         </div>
-        <span class="more-icon"><i class="fas fa-ellipsis-v"></i></span>
-    </a>
-    <div class="social-links">
-       <br class="nav-button">
-    <i class="fother">Copyright &copy; 2025 Denda Celuler. All rights reserved.</i>
+        <div class="content">
+            <div class="promo-title">KODE REFERRAL : DAFTAR2</div>
+            <div class="promo-desc">Aplikasi untuk Bisnis Pembayaran Produk Digital yang Lengkap dan Mudah Digunakan.</div>
+        </div>
     </div>
-    <a href="https://wa.me/+6285863630006" class="whatsapp-float" target="_blank"><img src="https://images.seeklogo.com/logo-png/16/3/whatsapp-logo-png_seeklogo-168310.png" alt="Logo Chat" width="25" height="25">
-        
     </a>
+    
+   <a href="https://support.propanaofficial.co.id/category/cetak/" class= "btn-link">
+    <div class="card">
+        <div class="logo-box">
+            <img src="https://freelogopng.com/images/all_img/1656733637logo-canva-png.png" alt="Logo FastPay">
+        </div>
+        <div class="content">
+            <div class="promo-title">MEDIA PROMOSI</div>
+            <div class="promo-desc">Template untuk kebutuhan media promosi cetak.</div>
+        </div>
+    </div>
+    </a>
+     <a href="https://www.mediafire.com/file/wx0kv87lp98jmas/Buku_Konter.apk/file" class= "btn-link">
+    <div class="card reverse">
+        <div class="logo-box">
+            <img src="https://ugc.production.linktr.ee/136d6d52-dbc6-40d3-a9f5-995b4035a4ac_20221231-063724.png?io=true&size=thumbnail-stack_v1_0" alt="Logo BukuAgen">
+        </div>
+        <div class="content">
+            <div class="promo-title"> </div>
+            <div class="promo-desc">Aplikasi Buku konter , Aplikasi Catat Data Pelanggan dengan Cepat tanpa perlu kuatir data hilang.</div>
+        </div>
+    </div>
+    </a>
+  
+    </div>
+        <div class="social-links" align= "center">
+    <i class="fother"><b = "right">Copyright &copy;2025 -  Denda Celuler</b></i>
+        <a href="https://wa.me/+6285863630006" class="whatsapp-float" target="_blank"><img src="https://images.seeklogo.com/logo-png/16/3/whatsapp-logo-png_seeklogo-168310.png" alt="Logo Chat" width="25" height="25">
+    </a>        
+    </div>
 </body>
 </html>
