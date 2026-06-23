@@ -1,241 +1,272 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<link rel="icon" href="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Denda Celuler</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <title>RAJA CELL - Web Server</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --yellow: #FFD700;
-            --blue: #0047AB;
-            --dark-blue: #003366;
-            --bg-color: #ffffff;
+            --primary: #4f46e5;
+            --success: #10b981;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
         }
-
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #cbd5e1;
+            margin: 0; padding: 0;
+            display: flex; justify-content: center;
         }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            position: relative;
+        .phone-container {
+            width: 100%; max-width: 450px;
+            background: var(--bg); min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            position: relative; padding-bottom: 30px;
         }
-
-        /* Header Styling */
-        .header {
+        .app-header {
+            background: linear-gradient(135deg, #4338ca, #6366f1);
+            color: white; padding: 25px 20px 45px 20px;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
             text-align: center;
-            margin-bottom: 50px;
-            padding: 0 2px;
         }
+        .user-info h2 { margin: 0; font-size: 22px; font-weight: 800; }
+        .user-info p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.8; }
 
-        .header h3 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 32px;
-            color: var(--black);
-            text-shadow: 3px 3px var(--yellow);
-            margin: 0;
-            line-height: 1.0;
-            text-transform: capitalize;
+        .tab-navigation {
+            display: flex; background: white; margin: -20px 20px 20px 20px;
+            padding: 6px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.05);
         }
+        .tab-btn {
+            flex: 1; padding: 12px; text-align: center; font-size: 13px;
+            font-weight: 700; color: var(--text-muted); cursor: pointer; border-radius: 10px;
+        }
+        .tab-btn.active { background-color: var(--primary); color: white; }
 
-        /* Card Wrapper */
-        .card {
-            display: flex;
-            align-items: center;
-            border: 2px solid #000;
-            border-radius: 2px;
-            margin-bottom: 20px;
-            background: #fff;
-            position: relative;
-            min-height: 20px;
-        }
+        .page-content { display: none; }
+        .page-content.active { display: block; }
 
-        /* Logo Box (Kotak Miring) */
-        .logo-box {
-            width: 120px;
-            height: 120px;
-            background: #fff;
-            border: 2px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            left: -20px;
-            transform: rotate(-5deg);
-            z-index: 2;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
-            overflow: hidden;
+        .menu-section { background: var(--card-bg); margin: 0 20px; padding: 15px; border-radius: 20px; }
+        .main-menu { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .menu-item { text-align: center; cursor: pointer; }
+        .icon-wrapper {
+            width: 50px; height: 50px; margin: 0 auto 8px auto; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
         }
+        .m-pulsa { background: #e0e7ff; color: #4338ca; }
+        .m-paket { background: #ecfdf5; color: #059669; }
+        .m-token { background: #fef3c7; color: #d97706; }
+        .m-game { background: #fae8ff; color: #c026d3; }
+        .menu-item.active .icon-wrapper { ring: 3px solid var(--primary); }
+        .menu-item span { font-size: 11px; font-weight: 600; }
 
-        /* Efek garis-garis sinar di belakang logo */
-        .logo-box::before {
-            content: "";
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: repeating-conic-gradient(from 0deg, #f0f0f0 0deg 10deg, transparent 10deg 20deg);
-            z-index: -1;
-        }
-
-        .logo-box img {
-            width: 40%;
-            height: auto;
-            transform: rotate(5deg); /* Mengimbangi miringnya kotak */
-        }
-
-        /* Content Styling */
-        .content {
-            padding: 15px 15px 15px 140px;
-            width: 100%;
-        }
-
-        /* Khusus untuk item kedua (Logo di kanan) */
-        .card.reverse {
-            flex-direction: row-reverse;
-        }
-
-        .card.reverse .logo-box {
-            left: auto;
-            right: -15px;
-            transform: rotate(5deg);
-        }
-
-        .card.reverse .content {
-            padding: 15px 140px 15px 20px;
-            text-align: left;
-        }
-
-        .promo-title {
-            font-weight: 700;
-            font-size: 10px;
-            color: #000;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .promo-desc {
-            font-size: 9px;
-            color: #444;
-            line-height: 1.4;
-        }
-
-        /* Responsive Mobile */
-        @media (max-width: 480px) {
-            .header h3 { font-size: 20px; }
-            .logo-box { width: 100px; height: 100px; left: -5px; }
-            .content { padding-left: 105px; }
-            .card.reverse .logo-box { right: -5px; }
-            .card.reverse .content { padding-right: 105px; }
-        }
+        .form-card { background: white; border-radius: 20px; padding: 20px; margin: 20px; border: 1px solid #f1f5f9; position: relative; min-height: 220px; }
+        .form-card h3 { margin: 0 0 15px 0; font-size: 15px; font-weight: 800; color: var(--primary); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 6px; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        input, select { width: 100%; padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 14px; font-family: inherit; font-weight: 600; background-color: #f8fafc; }
         
-       /*dekorasi link*/
-       .btn-link {
-       text-decoration: none;
-       }
-   /* Gaya untuk bagian footer/media sosial */
-       .social-links {
-            position: fixed;
-            bottom: 20px;
-            display: flex;
-            gap: 25px;
-            
-       .fother {
-            font-size: 10px;
-            text-align: center;
-            text-decoration: none;
-        }
+        .provider-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; max-height: 180px; overflow-y: auto; }
+        .provider-card { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px 4px; text-align: center; cursor: pointer; background: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 55px; }
+        .provider-card img { height: 24px; max-width: 90%; object-fit: contain; }
+        .provider-card div { font-size: 9px; font-weight: 700; margin-top: 4px; }
+        .provider-card.active { border-color: var(--primary); background: #f5f3ff; }
+
+        .btn-kirim { width: 100%; background: linear-gradient(135deg, #10b981, #059669); color: white; border: none; padding: 14px; font-size: 14px; font-weight: 800; border-radius: 10px; cursor: pointer; margin-top: 10px; }
         
-        /* Floating WhatsApp Button (Opsional) */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 50px;
-            right: 20px;
-            background-color: #25d366;
-            color: white;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2em;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 100;
-            text-decoration: none;
-        }
+        #loading-screen { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.96); border-radius:20px; display:flex; justify-content:center; align-items:center; font-weight:700; color:var(--primary); font-size:14px; z-index: 10; text-align: center; }
         
+        .footer { text-align: center; font-size: 11px; color: var(--text-muted); margin-top: 25px; font-weight: 600; }
     </style>
 </head>
 <body>
 
+<div class="phone-container">
+    <div class="app-header">
+        <div class="user-info">
+            <h2>⚡ RAJA CELL</h2>
+            <p>Aplikasi Server Transaksi Cloud Sheets Realtime</p>
+        </div>
+    </div>
 
-<div class="container">
-    <div class="header">
-    
-    <div align="center">
-        <img src="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png" width="150" height="150">
+    <div class="tab-navigation">
+        <div class="tab-btn active" onclick="switchPage('server')">📲 Top Up Mini</div>
+        <div class="tab-btn" onclick="switchPage('proposal')">💼 Kemitraan</div>
     </div>
-    <div class="title"><h3>Denda Celuler</h3></div>
-    </div>
-<a href="https://orderkuota.com/reff/MK01" class= "btn-link">
-    <div class="card">
-        <div class="logo-box">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFPIjE7b8PQzITZ8GjjFM0Jjz5zgjHI91o4PPeh1NDqw&s=10" alt="Logo K">
-        </div>
-        <div class="content">
-            <div class="promo-title">KODE REFERRAL : MK01</div>
-            <div class="promo-desc">Aplikasi jual pulsa, kuota, token, dan injek voucher dan Kartu perdana semua operator.</div>
-        </div>
-    </div></a>
 
-   <a href="https://propanaofficial.co.id/apps/" class= "btn-link">
-    <div class="card reverse">
-        <div class="logo-box">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYOuKIhYx1Tc5RsFrGSnFGAZ9zDfCcaDoGBqP9ikE1Xg&s=10" alt="Logo BukuAgen">
+    <div id="page-server" class="page-content active">
+        <div class="menu-section">
+            <div class="main-menu">
+                <div class="menu-item active" id="m-pulsa" onclick="pilihMenu('pulsa')">
+                    <div class="icon-wrapper m-pulsa">📱</div><span>Pulsa</span>
+                </div>
+                <div class="menu-item" id="m-paket" onclick="pilihMenu('paket')">
+                    <div class="icon-wrapper m-paket">🌐</div><span>Kuota</span>
+                </div>
+                <div class="menu-item" id="m-token" onclick="pilihMenu('token')">
+                    <div class="icon-wrapper m-token">⚡</div><span>PLN</span>
+                </div>
+                <div class="menu-item" id="m-game" onclick="pilihMenu('game')">
+                    <div class="icon-wrapper m-game">🎮</div><span>Game</span>
+                </div>
+            </div>
         </div>
-        <div class="content">
-            <div class="promo-title">KODE REFERRAL : DAFTAR2</div>
-            <div class="promo-desc">Aplikasi untuk Bisnis Pembayaran Produk Digital yang Lengkap dan Mudah Digunakan.</div>
+
+        <div class="form-card">
+            <div id="loading-screen">🔄 Menyambungkan ke Cloud Database...</div>
+            <h3 id="title-form">Top Up</h3>
+            <div class="form-group">
+                <label id="label-nomor">Nomor HP Tujuan</label>
+                <input type="tel" id="nomor_tujuan" placeholder="Masukkan nomor atau ID...">
+            </div>
+            <div class="form-group">
+                <label>Pilih Operator / Varian</label>
+                <div class="provider-grid" id="provider-container"></div>
+            </div>
+            <div class="form-group">
+                <label>Pilih Nominal / Produk</label>
+                <select id="produk"></select>
+            </div>
+            <button class="btn-kirim" onclick="prosesTransaksi()">🚀 Kirim Data & Order via WA</button>
         </div>
     </div>
-    </a>
+
+    <div id="page-proposal" class="page-content" style="padding: 20px;">
+        <div style="background: white; padding: 20px; border-radius: 20px; border-left: 5px solid var(--primary)">
+            <h3>📌 Sistem Cloud Otomatis</h3>
+            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">Seluruh daftar produk, harga konter, dan jenis operator di dalam web aplikasi ini dikelola penuh langsung menggunakan Google Spreadsheets secara otomatis & realtime tanpa edit kodingan HTML lagi.</p>
+        </div>
+    </div>
     
-   <a href="https://support.propanaofficial.co.id/category/cetak/" class= "btn-link">
-    <div class="card">
-        <div class="logo-box">
-            <img src="https://freelogopng.com/images/all_img/1656733637logo-canva-png.png" alt="Logo FastPay">
-        </div>
-        <div class="content">
-            <div class="promo-title">MEDIA PROMOSI</div>
-            <div class="promo-desc">Template untuk kebutuhan media promosi cetak.</div>
-        </div>
-    </div>
-    </a>
-     <a href="https://www.mediafire.com/file/wx0kv87lp98jmas/Buku_Konter.apk/file" class= "btn-link">
-    <div class="card reverse">
-        <div class="logo-box">
-            <img src="https://ugc.production.linktr.ee/136d6d52-dbc6-40d3-a9f5-995b4035a4ac_20221231-063724.png?io=true&size=thumbnail-stack_v1_0" alt="Logo BukuAgen">
-        </div>
-        <div class="content">
-            <div class="promo-title"> </div>
-            <div class="promo-desc">Aplikasi Buku konter , Aplikasi Catat Data Pelanggan dengan Cepat tanpa perlu kuatir data hilang.</div>
-        </div>
-    </div>
-    </a>
-  
-    </div>
-        <div class="social-links" align= "center">
-    <i class="fother"><b = "right">Copyright &copy;2025 -  Denda Celuler</b></i>
-        <a href="https://wa.me/+6285863630006" class="whatsapp-float" target="_blank"><img src="https://images.seeklogo.com/logo-png/16/3/whatsapp-logo-png_seeklogo-168310.png" alt="Logo Chat" width="25" height="25">
-    </a>        
-    </div>
+    <div class="footer">RAJA CELL © 2026 • Live Database System</div>
+</div>
+
+<script>
+    // ⚠️ GANTI LINK DI BAWAH INI DENGAN URL DEPLOY APPS SCRIPT BARU ANDA
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyo27_xcO_SO3ugYqD5eE90vVWbIFJKXJgJcZjzp5oQAlCJ7WVcaYPGYxo1zWpezVal/exec"; 
+    const WA_KONTER = "6285863630006"; 
+
+    let databaseLayanan = {}; 
+    let currentKategori = "pulsa";
+    let selectedProvider = "";
+
+    // Fungsi fetch data pintar antimacet dengan pembersih cache internal
+    async function muatDataDariSheets() {
+        try {
+            // Ditambahkan timestamp unik agar browser dipaksa mengambil data stok terupdate dari sheets
+            const urlDenganCacheBuster = SCRIPT_URL + "?t=" + new Date().getTime();
+            
+            const response = await fetch(urlDenganCacheBuster, { 
+                method: "GET",
+                mode: "cors",
+                headers: { "Content-Type": "application/json" }
+            });
+            
+            if (!response.ok) throw new Error('Response network error.');
+            
+            databaseLayanan = await response.json();
+            
+            if (Object.keys(databaseLayanan).length === 0 || databaseLayanan.error) {
+                document.getElementById('loading-screen').innerHTML = "⚠️ Gagal Sinkronisasi: Tab 'Produk' kosong/tidak sesuai format.";
+                return;
+            }
+            
+            document.getElementById('loading-screen').style.display = 'none';
+            pilihMenu('pulsa'); 
+            
+        } catch (error) {
+            document.getElementById('loading-screen').innerHTML = 
+                `<div style="padding:15px;">
+                    <span style="color:#ef4444; font-weight:800; display:block; margin-bottom:5px;">❌ Server Belum Siap</span>
+                    <small style="font-size:11px; color:#64748b; line-height:1.4; display:block;">
+                       Akses diblokir Google. Pastikan setelan <b>Who has access</b> di Apps Script sudah Anda ubah ke <b>Anyone (Siapa saja)</b> lalu Deploy ulang ke <b>Versi Baru (New Version)</b>.
+                    </small>
+                 </div>`;
+            console.error("Detail log kegagalan fetch:", error);
+        }
+    }
+
+    function switchPage(pageName) {
+        document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+        if(pageName === 'server') document.getElementById('page-server').classList.add('active');
+        else document.getElementById('page-proposal').classList.add('active');
+    }
+
+    function pilihMenu(kategori) {
+        currentKategori = kategori;
+        document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+        if(document.getElementById(`m-${kategori}`)) document.getElementById(`m-${kategori}`).classList.add('active');
+
+        const labelNomor = document.getElementById('label-nomor');
+        if(kategori === 'pulsa') { document.getElementById('title-form').innerText = "📱 Top Up Pulsa"; labelNomor.innerText = "Nomor HP Tujuan"; }
+        else if(kategori === 'paket') { document.getElementById('title-form').innerText = "🌐 Paket Data Internet"; labelNomor.innerText = "Nomor HP Tujuan"; }
+        else if(kategori === 'token') { document.getElementById('title-form').innerText = "💡 Token Listrik PLN"; labelNomor.innerText = "Nomor Meter / ID Pelanggan"; }
+        else { document.getElementById('title-form').innerText = "🎮 Top Up Game"; labelNomor.innerText = "ID Game & Server"; }
+
+        const grid = document.getElementById('provider-container');
+        grid.innerHTML = "";
+
+        if(!databaseLayanan[kategori] || !databaseLayanan[kategori].providers) {
+            grid.innerHTML = "<div style='grid-column:span 3; font-size:12px; color:#ef4444; text-align:center; padding:15px;'>Kategori ini belum diinput di data Excel Sheets</div>";
+            document.getElementById('produk').innerHTML = "";
+            return;
+        }
+
+        const keys = Object.keys(databaseLayanan[kategori].providers);
+        selectedProvider = keys[0];
+
+        keys.forEach((provName, index) => {
+            const card = document.createElement('div');
+            card.className = `provider-card ${index === 0 ? 'active' : ''}`;
+            card.onclick = () => gantiProvider(provName, card);
+            card.innerHTML = `<img src="${databaseLayanan[kategori].providers[provName].logo}" onerror="this.style.display='none'"><div>${provName}</div>`;
+            grid.appendChild(card);
+        });
+        updateDaftarHarga();
+    }
+
+    function gantiProvider(provName, element) {
+        document.querySelectorAll('.provider-card').forEach(el => el.classList.remove('active'));
+        element.classList.add('active');
+        selectedProvider = provName;
+        updateDaftarHarga();
+    }
+
+    function updateDaftarHarga() {
+        const selectProduk = document.getElementById('produk');
+        selectProduk.innerHTML = "";
+        
+        if(!databaseLayanan[currentKategori].providers[selectedProvider]) return;
+        
+        const produkList = databaseLayanan[currentKategori].providers[selectedProvider].items;
+        produkList.forEach(prod => {
+            const opt = document.createElement('option');
+            opt.value = `${prod.name}|${prod.price}`;
+            opt.innerHTML = `${prod.name} (Rp ${prod.price.toLocaleString('id-ID')})`;
+            selectProduk.appendChild(opt);
+        });
+    }
+
+    function prosesTransaksi() {
+        const nomor = document.getElementById('nomor_tujuan').value.trim();
+        const produkRaw = document.getElementById('produk').value;
+        if(!nomor || !produkRaw) { alert("Lengkapi data nomor dan varian produk!"); return; }
+        
+        const [namaProduk, hargaProduk] = produkRaw.split('|');
+        const dataKirim = { kategori: currentKategori.toUpperCase(), provider: selectedProvider, nomor: nomor, produk: namaProduk, harga: parseInt(hargaProduk) };
+
+        // Post order ke tab Transaksi Sheets secara background
+        fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(dataKirim) });
+
+        // Redirect invoice langsung ke WhatsApp Admin Konter
+        const formatPesan = `*NOTA ONLINE - RAJA CELL*\n------------------------------------------\nKategori: ${dataKirim.kategori}\nLayanan: ${dataKirim.provider}\nTujuan/ID: *${dataKirim.nomor}*\nProduk: ${dataKirim.produk}\n------------------------------------------\n*TOTAL HARGA: Rp ${dataKirim.harga.toLocaleString('id-ID')}*\n------------------------------------------\n_Mohon segera diproses via saldo server otomatis._`;
+        window.open(`https://api.whatsapp.com/send?phone=${WA_KONTER}&text=${encodeURIComponent(formatPesan)}`, '_blank');
+    }
+
+    // Eksekusi penarikan data langsung saat website diakses pelangan
+    muatDataDariSheets();
+</script>
 </body>
 </html>
