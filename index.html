@@ -5,237 +5,256 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Denda Celuler</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --yellow: #FFD700;
-            --blue: #0047AB;
-            --dark-blue: #003366;
-            --bg-color: #ffffff;
+            --bg: #0a0a0c;
+            --card: #141418;
+            --accent: #00f2ff; /* Cyber Cyan */
+            --accent-dim: rgba(0, 242, 255, 0.1);
+            --text-gray: #94a3b8;
+            --white: #ffffff;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--bg-color);
-            margin: 0;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            display: flex;
-            justify-content: center;
         }
 
-        .container {
-            max-width: 600px;
+        .payment-box {
+            background: var(--card);
             width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 30px;
             position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
 
-        /* Header Styling */
-        .header {
-            text-align: center;
-            margin-bottom: 50px;
-            padding: 0 2px;
-        }
-
-        .header h3 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 32px;
-            color: var(--black);
-            text-shadow: 3px 3px var(--yellow);
-            margin: 0;
-            line-height: 1.0;
-            text-transform: capitalize;
-        }
-
-        /* Card Wrapper */
-        .card {
-            display: flex;
-            align-items: center;
-            border: 2px solid #000;
-            border-radius: 2px;
-            margin-bottom: 20px;
-            background: #fff;
-            position: relative;
-            min-height: 20px;
-        }
-
-        /* Logo Box (Kotak Miring) */
-        .logo-box {
-            width: 120px;
-            height: 120px;
-            background: #fff;
-            border: 2px solid #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            left: -20px;
-            transform: rotate(-5deg);
-            z-index: 2;
-            box-shadow: 3px 3px 0px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-
-        /* Efek garis-garis sinar di belakang logo */
-        .logo-box::before {
+        /* Tech Decoration */
+        .payment-box::before {
             content: "";
             position: absolute;
-            width: 200%;
-            height: 200%;
-            background: repeating-conic-gradient(from 0deg, #f0f0f0 0deg 10deg, transparent 10deg 20deg);
-            z-index: -1;
+            top: -2px; left: 50%;
+            transform: translateX(-50%);
+            width: 100px; height: 4px;
+            background: var(--accent);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 0 15px var(--accent);
         }
 
-        .logo-box img {
-            width: 40%;
-            height: auto;
-            transform: rotate(5deg); /* Mengimbangi miringnya kotak */
-        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+        .header p { font-size: 12px; color: var(--text-gray); margin-top: 5px; }
 
-        /* Content Styling */
-        .content {
-            padding: 15px 15px 15px 140px;
-            width: 100%;
+        /* QRIS Cyber Style */
+        .qris-container {
+            border: 1px solid var(--accent-dim);
+            background: rgba(255,255,255,0.02);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
         }
-
-        /* Khusus untuk item kedua (Logo di kanan) */
-        .card.reverse {
-            flex-direction: row-reverse;
+        .qris-img {
+            width: 180px;
+            height: 180px;
+            filter: drop-shadow(0 0 5px var(--accent-dim));
+            border-radius: 10px;
+            padding: 5px;
+            background: white;
         }
-
-        .card.reverse .logo-box {
-            left: auto;
-            right: -15px;
-            transform: rotate(5deg);
-        }
-
-        .card.reverse .content {
-            padding: 15px 140px 15px 20px;
-            text-align: left;
-        }
-
-        .promo-title {
-            font-weight: 700;
-            font-size: 10px;
-            color: #000;
-            margin-bottom: 4px;
+        .an-name {
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--accent);
             text-transform: uppercase;
         }
 
-        .promo-desc {
-            font-size: 9px;
-            color: #444;
-            line-height: 1.4;
+        .section-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--text-gray);
+            margin-bottom: 15px;
+            display: block;
+            letter-spacing: 3px;
         }
 
-        /* Responsive Mobile */
-        @media (max-width: 480px) {
-            .header h3 { font-size: 20px; }
-            .logo-box { width: 100px; height: 100px; left: -5px; }
-            .content { padding-left: 105px; }
-            .card.reverse .logo-box { right: -5px; }
-            .card.reverse .content { padding-right: 105px; }
-        }
-        
-       /*dekorasi link*/
-       .btn-link {
-       text-decoration: none;
-       }
-   /* Gaya untuk bagian footer/media sosial */
-       .social-links {
-            position: fixed;
-            bottom: 20px;
+        /* Payment Buttons */
+        .pay-item {
             display: flex;
-            gap: 25px;
-            
-       .fother {
-            font-size: 10px;
-            text-align: center;
-            text-decoration: none;
-        }
-        
-        /* Floating WhatsApp Button (Opsional) */
-        .whatsapp-float {
-            position: fixed;
-            bottom: 50px;
-            right: 20px;
-            background-color: #25d366;
-            color: white;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 2em;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 100;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 14px 18px;
+            border-radius: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: 0.3s;
             text-decoration: none;
+            color: inherit;
         }
-        
+
+        .pay-item:hover {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            transform: translateX(5px);
+        }
+
+        .icon-box {
+            width: 40px; height: 40px;
+            background: white;
+            border-radius: 10px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+        .icon-box img { max-width: 100%; max-height: 100%; }
+
+        .details { flex-grow: 1; }
+        .details .bank-name { font-size: 14px; font-weight: 700; display: block; }
+        .details .acc-name { font-size: 11px; color: var(--text-gray); }
+
+        .btn-action {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        /* Notification */
+        #toast {
+            visibility: hidden;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: var(--bg);
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 100;
+        }
+        #toast.show { visibility: visible; animation: slideup 0.5s ease-out; }
+
+        @keyframes slideup {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
-
-<div class="container">
+<div class="payment-box">
     <div class="header">
-    
-    <div align="center">
-        <img src="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png" width="150" height="150">
+        <h1>Secure Payment DENDA CELL</h1>
     </div>
-    <div class="title"><h3>Denda Celuler</h3></div>
-    </div>
-<a href="https://orderkuota.com/reff/MK01" class= "btn-link">
-    <div class="card">
-        <div class="logo-box">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFPIjE7b8PQzITZ8GjjFM0Jjz5zgjHI91o4PPeh1NDqw&s=10" alt="Logo K">
-        </div>
-        <div class="content">
-            <div class="promo-title">KODE REFERRAL : MK01</div>
-            <div class="promo-desc">Aplikasi jual pulsa, kuota, token, dan injek voucher dan Kartu perdana semua operator.</div>
-        </div>
-    </div></a>
 
-   <a href="https://propanaofficial.co.id/apps/" class= "btn-link">
-    <div class="card reverse">
-        <div class="logo-box">
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYOuKIhYx1Tc5RsFrGSnFGAZ9zDfCcaDoGBqP9ikE1Xg&s=10" alt="Logo BukuAgen">
-        </div>
-        <div class="content">
-            <div class="promo-title">KODE REFERRAL : DAFTAR2</div>
-            <div class="promo-desc">Aplikasi untuk Bisnis Pembayaran Produk Digital yang Lengkap dan Mudah Digunakan.</div>
-        </div>
+    <div class="qris-container">
+        <span class="section-label">SCAN ME</span>
+        <img src="https://raw.githubusercontent.com/Dendaeliyana/home/refs/heads/main/1787583440268.jpg" class="qris-img" alt="QRIS">
+        <span class="an-name">Denda Celuler</span>
     </div>
+
+    <span class="section-label">DIGITAL WALLET</span>
+    <a href="https://link.dana.id/minta?full_url=https://qr.dana.id/v1/281012012020042324884704" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/7/72/Logo_dana_blue.svg" alt="DANA"></div>
+        <div class="details">
+            <span class="bank-name">DANA</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
+        </div>
+        <div class="btn-action">OPEN</div>
+    </a>
+
+    <a href="https://gopay.app.link/transfer?phoneNumber=085863630006" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/8/86/Gopay_logo.svg" alt="GOPAY"></div>
+        <div class="details">
+            <span class="bank-name">GOPAY</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
+        </div>
+        <div class="btn-action">OPEN</div>
+    </a>
+
+    <a href="https://shopee.co.id/universal-link/now-wallet/transfer?phoneNumber=085863630006" class="pay-item">
+        <div class="icon-box" ><img src="https://shopeepay.co.id/src/pages/home/assets/images/new-homepage/new-spp-logo.svg" alt="SHOPEEPAY"></div>
+        <div class="details">
+            <span class="bank-name">SHOPEEPAY</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
+            </div>
+        <div class="btn-action">OPEN</div>
     </a>
     
-   <a href="https://support.propanaofficial.co.id/category/cetak/" class= "btn-link">
-    <div class="card">
-        <div class="logo-box">
-            <img src="https://freelogopng.com/images/all_img/1656733637logo-canva-png.png" alt="Logo FastPay">
+    <span class="section-label">BANK TRANSFER</span>
+    <div onclick="copyRec('440501013834533', 'BRI')" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9a/BRI_2025_%28with_full_name%29.svg/1280px-BRI_2025_%28with_full_name%29.svg.png" alt="BRI"></div>
+        <div class="details">
+            <span class="bank-name">BRI</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
         </div>
-        <div class="content">
-            <div class="promo-title">MEDIA PROMOSI</div>
-            <div class="promo-desc">Template untuk kebutuhan media promosi cetak.</div>
+        <div class="btn-action">COPY</div>
+    </div>
+
+    <div onclick="copyRec('1010010241204', 'MANDIRI')" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/Bank_Mandiri_logo_2016.svg" alt="MANDIRI"></div>
+        <div class="details">
+            <span class="bank-name">MANDIRI</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
         </div>
+        <div class="btn-action">COPY</div>
     </div>
-    </a>
-     <a href="https://www.mediafire.com/file/wx0kv87lp98jmas/Buku_Konter.apk/file" class= "btn-link">
-    <div class="card reverse">
-        <div class="logo-box">
-            <img src="https://ugc.production.linktr.ee/136d6d52-dbc6-40d3-a9f5-995b4035a4ac_20221231-063724.png?io=true&size=thumbnail-stack_v1_0" alt="Logo BukuAgen">
+
+    <div onclick="copyRec('901928114390', 'SEABANK')" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/SeaBank.svg/1280px-SeaBank.svg.png" alt="SEABANK"></div>
+        <div class="details">
+            <span class="bank-name">SEABANK</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
         </div>
-        <div class="content">
-            <div class="promo-title"> </div>
-            <div class="promo-desc">Aplikasi Buku konter , Aplikasi Catat Data Pelanggan dengan Cepat tanpa perlu kuatir data hilang.</div>
+        <div class="btn-action">COPY</div>
+    </div>
+    
+       <div onclick="copyRec('505491434067', 'JAGO')" class="pay-item">
+        <div class="icon-box"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Logo-jago.svg/1280px-Logo-jago.svg.png" alt="JAGO"></div>
+        <div class="details">
+            <span class="bank-name">JAGO</span>
+            <span class="acc-name">A.N. Denda Eliyana</span>
         </div>
+        <div class="btn-action">COPY</div>
     </div>
-    </a>
-  
-    </div>
-        <div class="social-links" align= "center">
-    <i class="fother"><b = "right">Copyright &copy;2025 -  Denda Celuler</b></i>
-        <a href="https://wa.me/+6285863630006" class="whatsapp-float" target="_blank"><img src="https://images.seeklogo.com/logo-png/16/3/whatsapp-logo-png_seeklogo-168310.png" alt="Logo Chat" width="25" height="25">
-    </a>        
-    </div>
+    
+</div>
+
+<div id="toast">Nomor Rekening Disalin!</div>
+
+<script>
+    function copyRec(num, bank) {
+        navigator.clipboard.writeText(num);
+        let toast = document.getElementById("toast");
+        toast.innerHTML = bank + " - DISALIN!";
+        toast.className = "show";
+        setTimeout(() => { toast.className = ""; }, 2500);
+    }
+</script>
+
 </body>
 </html>
