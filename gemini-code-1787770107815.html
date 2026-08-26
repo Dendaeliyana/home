@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAMPANG ARMY - Master Deep Intent Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --main-green: #00ff33;
+            --dim-green: #00881b;
+            --dark-bg: #030803;
+            --panel-bg: rgba(0, 20, 5, 0.94);
+            --glow: rgba(0, 255, 51, 0.4);
+            --alert-red: #ff3333;
+            --warn-orange: #ffaa00;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Share Tech Mono', monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--main-green);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%);
+            background-size: 100% 4px;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #matrix-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            opacity: 0.25;
+        }
+
+        .launch-btn {
+            position: relative;
+            z-index: 10;
+            background: rgba(0, 40, 10, 0.85);
+            border: 2px solid var(--main-green);
+            color: var(--main-green);
+            padding: 15px 30px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            box-shadow: 0 0 15px var(--glow);
+        }
+
+        .hud-container {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--panel-bg);
+            border: 2px solid var(--main-green);
+            border-radius: 8px;
+            padding: 14px;
+            box-shadow: 0 0 35px var(--glow);
+            position: fixed;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+            transform: scale(1);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hud-container.minimized {
+            transform: scale(0.1) translateY(400px);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .popup-titlebar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 40, 10, 0.6);
+            border-bottom: 1px solid var(--dim-green);
+            padding: 6px 12px;
+            margin: -14px -14px 12px -14px;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+
+        .window-title {
+            font-size: 0.8rem;
+            letter-spacing: 1.5px;
+            color: var(--main-green);
+        }
+
+        .window-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .win-btn {
+            background: transparent;
+            border: 1px solid var(--dim-green);
+            color: var(--main-green);
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .win-btn:hover {
+            background: var(--main-green);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--dim-green);
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hacker-icon {
+            width: 34px;
+            height: 34px;
+            stroke: var(--main-green);
+            fill: none;
+            filter: drop-shadow(0 0 6px var(--main-green));
+        }
+
+        .title-block h1 {
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--main-green);
+            line-height: 1;
+        }
+
+        .title-block p {
+            font-size: 0.65rem;
+            color: var(--dim-green);
+            letter-spacing: 1.2px;
+            margin-top: 3px;
+        }
+
+        /* Styling Logo Android */
+        .android-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--dim-green);
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(0, 30, 8, 0.5);
+            box-shadow: 0 0 8px rgba(0, 255, 51, 0.2);
+        }
+
+        .android-icon {
+            width: 28px;
+            height: 28px;
+            fill: var(--main-green);
+            filter: drop-shadow(0 0 4px var(--main-green));
+        }
+
+        /* Menu Grid Navigasi 16 Modul */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+
+        .menu-btn {
+            background: rgba(0, 40, 10, 0.6);
+            border: 1px solid var(--dim-green);
+            color: var(--main-green);
+            padding: 7px 2px;
+            font-size: 0.6rem;
+            cursor: pointer;
+            text-align: center;
+            border-radius: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-btn.danger-btn {
+            border-color: rgba(255, 51, 51, 0.6);
+            color: #ff6666;
+        }
+
+        .menu-btn.warn-btn {
+            border-color: rgba(255, 170, 0, 0.6);
+            color: var(--warn-orange);
+        }
+
+        .menu-btn:hover, .menu-btn.active {
+            background: var(--main-green);
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 0 10px var(--main-green);
+        }
+
+        .menu-btn.danger-btn:hover, .menu-btn.danger-btn.active {
+            background: var(--alert-red);
+            color: #000;
+            box-shadow: 0 0 10px var(--alert-red);
+        }
+
+        .menu-btn.warn-btn:hover, .menu-btn.warn-btn.active {
+            background: var(--warn-orange);
+            color: #000;
+            box-shadow: 0 0 10px var(--warn-orange);
+        }
+
+        .content-panel {
+            border: 1px solid var(--dim-green);
+            background: rgba(0, 10, 2, 0.88);
+            padding: 14px;
+            min-height: 260px;
+            max-height: 330px;
+            overflow-y: auto;
+            border-radius: 6px;
+        }
+
+        .content-panel::-webkit-scrollbar { width: 5px; }
+        .content-panel::-webkit-scrollbar-thumb { background: var(--dim-green); border-radius: 3px; }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        .section-title {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--dim-green);
+            padding-bottom: 4px;
+        }
+
+        .section-title.danger-title { color: var(--alert-red); border-bottom-color: var(--alert-red); }
+        .section-title.warn-title { color: var(--warn-orange); border-bottom-color: var(--warn-orange); }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.78rem;
+        }
+
+        .hp-link {
+            color: var(--main-green);
+            text-decoration: none;
+            border: 1px solid var(--main-green);
+            padding: 2px 8px;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .hp-link:hover {
+            background: var(--main-green);
+            color: #000;
+            box-shadow: 0 0 8px var(--main-green);
+            font-weight: bold;
+        }
+
+        .hp-link.danger-link { color: var(--alert-red); border-color: var(--alert-red); }
+        .hp-link.danger-link:hover { background: var(--alert-red); color: #000; box-shadow: 0 0 8px var(--alert-red); }
+
+        .hp-link.warn-link { color: var(--warn-orange); border-color: var(--warn-orange); }
+        .hp-link.warn-link:hover { background: var(--warn-orange); color: #000; box-shadow: 0 0 8px var(--warn-orange); }
+
+        .terminal-log {
+            margin-top: 12px;
+            font-size: 0.7rem;
+            color: var(--dim-green);
+            border-top: 1px dashed var(--dim-green);
+            padding-top: 6px;
+        }
+
+        @media (max-width: 950px) {
+            .menu-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+        @media (max-width: 550px) {
+            .menu-grid { grid-template-columns: repeat(2, 1fr); }
+            .hud-container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="matrix-canvas"></canvas>
+
+    <button class="launch-btn" id="launch-popup-btn" onclick="openPopup()" style="display:none;">[ LAUNCH TERMINAL ]</button>
+
+    <div class="hud-container" id="popup-window">
+        
+        <div class="popup-titlebar">
+            <span class="window-title">root@jampang-army:~# master_intent_console.sh</span>
+            <div class="window-controls">
+                <button class="win-btn" onclick="minimizePopup()">-</button>
+                <button class="win-btn" onclick="closePopup()">X</button>
+            </div>
+        </div>
+
+        <div class="header">
+            <div class="brand-logo">
+                <svg class="hacker-icon" viewBox="0 0 100 100">
+                    <path d="M50,10 C25,10 15,35 15,55 C15,75 35,90 50,90 C65,90 85,75 85,55 C85,35 75,10 50,10 Z" stroke-width="2"/>
+                    <ellipse cx="38" cy="48" rx="5" ry="3" fill="#00ff33"/>
+                    <ellipse cx="62" cy="48" rx="5" ry="3" fill="#00ff33"/>
+                    <path d="M40,60 L50,68 L60,60" stroke-width="2"/>
+                    <path d="M30,72 Q50,85 70,72" stroke-width="2"/>
+                </svg>
+                <div class="title-block">
+                    <h1>JAMPANG ARMY</h1>
+                    <p>ALL-IN-ONE SYSTEM INTENT CONSOLE</p>
+                </div>
+            </div>
+            
+            <!-- Logo Android sebagai pengganti teks status -->
+            <div class="android-badge" title="Android OS System Interface">
+                <svg class="android-icon" viewBox="0 0 24 24">
+                    <path d="M6,18A1,1 0 0,1 5,17V10A1,1 0 0,1 6,9A1,1 0 0,1 7,10V17A1,1 0 0,1 6,18M18,18A1,1 0 0,1 17,17V10A1,1 0 0,1 18,9A1,1 0 0,1 19,10V17A1,1 0 0,1 18,18M8.5,8.12A6.002,6.002 0 0,1 12,7A6.002,6.002 0 0,1 15.5,8.12L16.85,5.78A0.5,0.5 0 0,0 16.42,5.03A0.5,0.5 0 0,0 15.98,5.25L14.58,7.67A5.967,5.967 0 0,0 12,7.12C11.1,7.12 10.25,7.31 9.42,7.67L8.02,5.25A0.5,0.5 0 0,0 7.58,5.03A0.5,0.5 0 0,0 7.15,5.78L8.5,8.12M9.5,10.5A0.75,0.75 0 0,0 8.75,11.25A0.75,0.75 0 0,0 9.5,12A0.75,0.75 0 0,0 10.25,11.25A0.75,0.75 0 0,0 9.5,10.5M14.5,10.5A0.75,0.75 0 0,0 13.75,11.25A0.75,0.75 0 0,0 14.5,12A0.75,0.75 0 0,0 15.25,11.25A0.75,0.75 0 0,0 14.5,10.5M8,18.5C8,19.33 8.67,20 9.5,20H14.5C15.33,20 16,19.33 16,18.5V9H8V18.5Z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 16 Modul Menu -->
+        <div class="menu-grid">
+            <button class="menu-btn active" onclick="switchMenu('setting', this)">SETTING</button>
+            <button class="menu-btn" onclick="switchMenu('akses', this)">AKSES</button>
+            <button class="menu-btn" onclick="switchMenu('apps', this)">APPS</button>
+            <button class="menu-btn" onclick="switchMenu('wifi', this)">WI-FI</button>
+            <button class="menu-btn" onclick="switchMenu('hardware', this)">PERANGKAT</button>
+            <button class="menu-btn" onclick="switchMenu('media', this)">MEDIA</button>
+            <button class="menu-btn" onclick="switchMenu('storage', this)">STORAGE</button>
+            <button class="menu-btn" onclick="switchMenu('akun', this)">AKUN</button>
+            <button class="menu-btn" onclick="switchMenu('lokasi', this)">GPS/LOKASI</button>
+            <button class="menu-btn" onclick="switchMenu('network', this)">JARINGAN</button>
+            <button class="menu-btn" onclick="switchMenu('diag', this)">DIAGNOSTIK</button>
+            <button class="menu-btn warn-btn" onclick="switchMenu('dev', this)">DEV OPTIONS</button>
+            <button class="menu-btn warn-btn" onclick="switchMenu('sec', this)">KEAMANAN</button>
+            <button class="menu-btn danger-btn" onclick="switchMenu('dial', this)">KODE DIAL</button>
+            <button class="menu-btn danger-btn" onclick="switchMenu('lock', this)">POLA/PIN</button>
+            <button class="menu-btn danger-btn" onclick="switchMenu('reset', this)">RESET</button>
+        </div>
+
+        <div class="content-panel">
+            
+            <!-- 1. SETTING UTAMA -->
+            <div id="setting" class="content-section active">
+                <div class="section-title">/// PENGATURAN UTAMA SISTEM</div>
+                <div class="setting-row"><span>PENGATURAN UTAMA HP</span><a href="intent:#Intent;action=android.settings.SETTINGS;end" class="hp-link">OPEN SETTINGS</a></div>
+                <div class="setting-row"><span>TAMPILAN / DEKSTOP / LAYAR</span><a href="intent:#Intent;action=android.settings.DISPLAY_SETTINGS;end" class="hp-link">DISPLAY</a></div>
+                <div class="setting-row"><span>TANGGAL & WAKTU SISTEM</span><a href="intent:#Intent;action=android.settings.DATE_SETTINGS;end" class="hp-link">DATE & TIME</a></div>
+                <div class="setting-row"><span>SUARA & NOTIFIKASI</span><a href="intent:#Intent;action=android.settings.SOUND_SETTINGS;end" class="hp-link">SOUND </a></div>
+            </div>
+
+            <!-- 2. AKSESIBILITAS & INPUT -->
+            <div id="akses" class="content-section">
+                <div class="section-title">/// AKSESIBILITAS & METODE INPUT</div>
+                <div class="setting-row"><span>PENGATURAN AKSESIBILITAS</span><a href="intent:#Intent;action=android.settings.ACCESSIBILITY_SETTINGS;end" class="hp-link">ACCESSIBILITY </a></div>
+                <div class="setting-row"><span>BAHASA & KEYBOARD INPUT</span><a href="intent:#Intent;action=android.settings.INPUT_METHOD_SETTINGS;end" class="hp-link">LANGUAGE & INPUT </a></div>
+                <div class="setting-row"><span>LAYANAN CAPTIONING SYSTEM</span><a href="intent:#Intent;action=android.settings.CAPTIONING_SETTINGS;end" class="hp-link">CAPTIONING </a></div>
+            </div>
+
+            <!-- 3. APLIKASI & PRIVASI -->
+            <div id="apps" class="content-section">
+                <div class="section-title">/// MANAJEMEN APLIKASI & IZIN PRIVASI</div>
+                <div class="setting-row"><span>DAFTAR APLIKASI TERPASANG</span><a href="intent:#Intent;action=android.settings.APPLICATION_SETTINGS;end" class="hp-link">MANAGE APPS</a></div>
+                <div class="setting-row"><span>APLIKASI DEFAULT HP</span><a href="intent:#Intent;action=android.settings.MANAGE_DEFAULT_APPS_SETTINGS;end" class="hp-link"> DEFAULT APPS </a></div>
+                <div class="setting-row"><span>IZIN AKSES KHUSUS APLIKASI</span><a href="intent:#Intent;action=android.settings.MANAGE_SPECIAL_APP_ACCESS;end" class="hp-link"> SPECIAL ACCESS</a></div>
+                <div class="setting-row"><span>PENGATURAN PRIVASI & MANAJER IZIN</span><a href="intent:#Intent;action=android.settings.PRIVACY_SETTINGS;end" class="hp-link">PRIVACY MANAGER </a></div>
+            </div>
+
+            <!-- 4. WI-FI & KONEKTIVITAS -->
+            <div id="wifi" class="content-section">
+                <div class="section-title">/// WI-FI, BLUETOOTH & WIRELESS</div>
+                <div class="setting-row"><span>PENGATURAN WI-FI</span><a href="intent:#Intent;action=android.settings.WIFI_SETTINGS;end" class="hp-link">WI-FI CONTROL</a></div>
+                <div class="setting-row"><span>BLUETOOTH PERANGKAT</span><a href="intent:#Intent;action=android.settings.BLUETOOTH_SETTINGS;end" class="hp-link">BLUETOOTH</a></div>
+                <div class="setting-row"><span>TETHERING & HOTSPOT SELULER</span><a href="intent:#Intent;action=android.settings.TETHER_SETTINGS;end" class="hp-link"> HOTSPOT</a></div>
+                <div class="setting-row"><span>PENYAMBUNGAN PROYEKSI (CAST SCREEN)</span><a href="intent:#Intent;action=android.settings.WIFI_DISPLAY_SETTINGS;end" class="hp-link">CAST SCREEN</a></div>
+                <div class="setting-row"><span>NFC & PENYAMBUNGAN NIRKABEL</span><a href="intent:#Intent;action=android.settings.NFC_SETTINGS;end" class="hp-link">NFC CONTROL</a></div>
+            </div>
+
+            <!-- 5. HARDWARE & PERANGKAT -->
+            <div id="hardware" class="content-section">
+                <div class="section-title">/// PERANGKAT HARDWARE & STATUS BATERAI</div>
+                <div class="setting-row"><span>INFORMASI LENGKAP HP (ABOUT PHONE)</span><a href="intent:#Intent;action=android.settings.DEVICE_INFO_SETTINGS;end" class="hp-link">ABOUT PHONE </a></div>
+                <div class="setting-row"><span>STATUS BATERAI & PENGGUNAAN DAYA</span><a href="intent:#Intent;action=android.intent.action.POWER_USAGE_SUMMARY;end" class="hp-link"> BATTERY USAGE</a></div>
+                <div class="setting-row"><span>BUKA KAMERA UTAMA</span><a href="intent:#Intent;action=android.media.action.IMAGE_CAPTURE;end" class="hp-link"> OPEN CAMERA</a></div>
+            </div>
+
+            <!-- 6. MEDIA & FILE SYSTEM -->
+            <div id="media" class="content-section">
+                <div class="section-title">/// AKSI MEDIA & DIREKTORI FILE</div>
+                <div class="setting-row"><span>GALERI FOTO & MEDIA</span><a href="intent:#Intent;action=android.intent.action.VIEW;type=image/*;end" class="hp-link">GALLERY</a></div>
+                <div class="setting-row"><span>PENGELOLA FILE DEFAULT</span><a href="intent:#Intent;action=android.intent.action.VIEW;type=resource/folder;end" class="hp-link"> FILE MANAGER </a></div>
+                <div class="setting-row"><span>DAFTAR KONTAK PERANGKAT</span><a href="intent:#Intent;action=android.intent.action.VIEW;data=content://contacts/people;end" class="hp-link">CONTACTS </a></div>
+            </div>
+
+            <!-- 7. STORAGE & MEMORI -->
+            <div id="storage" class="content-section">
+                <div class="section-title">/// PENYIMPANAN MEMORI & SD CARD</div>
+                <div class="setting-row"><span>PENYIMPANAN INTERNAL</span><a href="intent:#Intent;action=android.settings.INTERNAL_STORAGE_SETTINGS;end" class="hp-link"> INTERNAL STORAGE</a></div>
+                <div class="setting-row"><span>MEMORY CARD / SD CARD CONTROL</span><a href="intent:#Intent;action=android.settings.MEMORY_CARD_SETTINGS;end" class="hp-link">SD CARD</a></div>
+            </div>
+
+            <!-- 8. AKUN & SINKRONISASI -->
+            <div id="akun" class="content-section">
+                <div class="section-title">/// MANAJEMEN AKUN & SINKRONISASI</div>
+                <div class="setting-row"><span>PENGATURAN AKUN TERHUBUNG</span><a href="intent:#Intent;action=android.settings.SYNC_SETTINGS;end" class="hp-link">SYNC ACCOUNTS </a></div>
+                <div class="setting-row"><span>TAMBAH AKUN BARU</span><a href="intent:#Intent;action=android.settings.ADD_ACCOUNT_SETTINGS;end" class="hp-link">ADD ACCOUNT </a></div>
+            </div>
+
+            <!-- 9. GPS & LOKASI -->
+            <div id="lokasi" class="content-section">
+                <div class="section-title">/// LOKASI & SENSOR GPS</div>
+                <div class="setting-row"><span>PENGATURAN LOKASI / GPS</span><a href="intent:#Intent;action=android.settings.LOCATION_SOURCE_SETTINGS;end" class="hp-link">GPS SETTINGS</a></div>
+                <div class="setting-row"><span>ANALISIS ALAMAT IP PERANGKAT</span><a href="https://ip-api.com" target="_blank" class="hp-link">CHECK IP </a></div>
+            </div>
+
+            <!-- 10. JARINGAN & SELULER -->
+            <div id="network" class="content-section">
+                <div class="section-title">/// ADVANCED NETWORKING & APN</div>
+                <div class="setting-row"><span>DATA SELULER & ROAMING</span><a href="intent:#Intent;action=android.settings.DATA_ROAMING_SETTINGS;end" class="hp-link"> CELLULAR DATA </a></div>
+                <div class="setting-row"><span>TITIK AKSES APN SELULER</span><a href="intent:#Intent;action=android.settings.APN_SETTINGS;end" class="hp-link">APN SETTINGS </a></div>
+                <div class="setting-row"><span>KONFIGURASI VPN & PRIVATE DNS</span><a href="intent:#Intent;action=android.settings.VPN_SETTINGS;end" class="hp-link"> VPN / DNS </a></div>
+                <div class="setting-row"><span>PENGGUNAAN DATA APLIKASI</span><a href="intent:#Intent;action=android.settings.DATA_USAGE_SETTINGS;end" class="hp-link"> DATA USAGE </a></div>
+            </div>
+
+            <!-- 11. DIAGNOSTIK & LOGS -->
+            <div id="diag" class="content-section">
+                <div class="section-title">/// SYSTEM LOGS & DIAGNOSTIK</div>
+                <div class="setting-row"><span>LISENSI WEBVIEW & SERTIFIKAT</span><a href="intent:#Intent;action=android.settings.WEBVIEW_LICENSE_HTML;end" class="hp-link"> SYS LICENSES </a></div>
+                <div class="setting-row"><span>STATUS CAPTIVE PORTAL HOTSPOT</span><a href="intent:#Intent;action=android.net.conn.CAPTIVE_PORTAL;end" class="hp-link">CAPTIVE PORTAL </a></div>
+            </div>
+
+            <!-- 12. DEVELOPER OPTIONS -->
+            <div id="dev" class="content-section">
+                <div class="section-title warn-title">/// OPSI PENGEMBANG (DEVELOPER OPTIONS)</div>
+                <div class="setting-row"><span>OPSI PENGEMBANG / DEV OPTIONS</span><a href="intent:#Intent;action=android.settings.APPLICATION_DEVELOPMENT_SETTINGS;end" class="hp-link warn-link"> DEV OPTIONS </a></div>
+                <div class="setting-row"><span>WEBVIEW IMPLEMENTATION</span><a href="intent:#Intent;action=android.settings.WEBVIEW_SETTINGS;end" class="hp-link warn-link"> WEBVIEW DEV </a></div>
+            </div>
+
+            <!-- 13. KEAMANAN & PRIVASI KHUSUS -->
+            <div id="sec" class="content-section">
+                <div class="section-title warn-title">/// PANEL KEAMANAN & KREDENSIAL</div>
+                <div class="setting-row"><span>PENGATURAN KEAMANAN PERANGKAT</span><a href="intent:#Intent;action=android.settings.SECURITY_SETTINGS;end" class="hp-link warn-link"> SECURITY PANEL </a></div>
+                <div class="setting-row"><span>ADMINISTRATOR PERANGKAT (DEVICE ADMIN)</span><a href="intent:#Intent;action=android.settings.DEVICE_ADMIN_SETTINGS;end" class="hp-link warn-link"> DEVICE ADMIN </a></div>
+            </div>
+
+            <!-- 14. KODE DIAL RAHASIA -->
+            <div id="dial" class="content-section">
+                <div class="section-title danger-title">/// KODE DIAL DIAGNOSTIK & HARWDARE</div>
+                <div class="setting-row"><span>DIAL CEK IMEI (*#06#)</span><a href="tel:*%2306%23" class="hp-link danger-link">DIAL IMEI</a></div>
+                <div class="setting-row"><span>TESTING JARINGAN & BATERAI (*#*#4636#*#*)</span><a href="tel:*%23*%234636#*#*" class="hp-link danger-link"> DIAL TEST MENU </a></div>
+                <div class="setting-row"><span>KALIBRASI HARDWARE & SENSOR (*#0*#)</span><a href="tel:*%230*%23" class="hp-link danger-link"> DIAL HW TEST</a></div>
+            </div>
+
+            <!-- 15. RISET POLA & PIN LAYAR -->
+            <div id="lock" class="content-section">
+                <div class="section-title danger-title">/// RESET POLA & KUNCI KEAMANAN LAYAR</div>
+                <div class="setting-row"><span>RISET UNLOCK POLA / KUNCI KREDENSIAL</span><a href="intent:#Intent;action=android.credentials.UNLOCK;end" class="hp-link danger-link">UNLOCK PATTERN</a></div>
+                <div class="setting-row"><span>GANTI KUNCI LAYAR (PIN/POLA/PASSWORD)</span><a href="intent:#Intent;action=android.app.action.SET_NEW_PASSWORD;end" class="hp-link danger-link">SET NEW LOCK</a></div>
+                <div class="setting-row"><span>KEAMANAN ENKRIPSI PERANGKAT</span><a href="intent:#Intent;action=android.settings.ENCRYPTION_CHECK_USER;end" class="hp-link danger-link">ENCRYPTION</a></div>
+            </div>
+
+            <!-- 16. RESET SYSTEM & NETWORK -->
+            <div id="reset" class="content-section">
+                <div class="section-title danger-title">/// RESET SYSTEM & WIPE DATA</div>
+                <div class="setting-row"><span>MENU RISET KE PABRIK (FACTORY RESET)</span><a href="intent:#Intent;action=android.settings.BACKUP_AND_RESET_SETTINGS;end" class="hp-link danger-link"> FACTORY RESET </a></div>
+                <div class="setting-row"><span>RESET JARINGAN (WI-FI, BLUETOOTH, DATA)</span><a href="intent:#Intent;action=android.settings.RESET_NETWORK_SETTINGS;end" class="hp-link danger-link"> RESET NETWORK</a></div>
+                <div class="setting-row"><span>BACKUP & SYSTEM RECOVERY</span><a href="intent:#Intent;action=android.settings.BACKUP_AND_RESET_SETTINGS;end" class="hp-link danger-link"> BACKUP SYSTEM </a></div>
+            </div>
+
+        </div>
+
+        <div class="terminal-log">
+            <span id="log-text">> Console ready. Select any module to execute deep intent.</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize) + 1;
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(3, 8, 3, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#00ff33';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 35);
+
+        function switchMenu(menuId, btn) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+
+            document.getElementById(menuId).classList.add('active');
+            btn.classList.add('active');
+
+            updateLog(`Switched module to: [${menuId.toUpperCase()}]`);
+        }
+
+        function updateLog(message) {
+            document.getElementById('log-text').innerText = `> ${message}`;
+        }
+
+        function closePopup() {
+            document.getElementById('popup-window').style.display = 'none';
+            document.getElementById('launch-popup-btn').style.display = 'block';
+        }
+
+        function minimizePopup() {
+            const popup = document.getElementById('popup-window');
+            popup.classList.toggle('minimized');
+            if(popup.classList.contains('minimized')) {
+                updateLog('Console minimized.');
+            } else {
+                updateLog('Console restored.');
+            }
+        }
+
+        function openPopup() {
+            const popup = document.getElementById('popup-window');
+            popup.style.display = 'block';
+            popup.classList.remove('minimized');
+            document.getElementById('launch-popup-btn').style.display = 'none';
+            updateLog('Console session restored.');
+        }
+    </script>
+</body>
+</html>
