@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Denda Eliyana</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <style>
+        :root { --blue: #0284c7; --slate: #1e293b; --green: #16a34a; }
+        body { font-family: sans-serif; background: #0f172a; color: #f1f5f9; margin: 0; padding: 10px; font-size: 14px; }
+        .card { background: var(--slate); border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 10px; }
+        h1 { font-size: 18px; text-align: center; color: var(--blue); margin: 0 0 15px; }
+        label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: bold; display: block; margin-bottom: 4px; }
+        select, input { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #475569; border-radius: 8px; color: #fff; margin-bottom: 10px; box-sizing: border-box; }
+        .btn-scan { background: var(--blue); border: none; padding: 15px; border-radius: 10px; color: white; font-weight: 800; cursor: pointer; width: 100%; margin-bottom: 10px; }
+        #status { display: none; text-align: center; color: #fbbf24; font-size: 12px; margin-bottom: 10px; }
+        .preview { background: white; color: #000; padding: 15px; font-family: monospace; font-size: 12px; white-space: pre; border-radius: 4px; box-shadow: inset 0 0 10px rgba(0,0,0,0.2); }
+        .btn-print { width: 100%; padding: 15px; background: var(--green); color: white; border: none; border-radius: 10px; font-weight: bold; margin-top: 15px; font-size: 16px; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="card" style="max-width: 450px; margin: auto;">
+    <h1>DENDA CELL</h1>
+    
+    <label>Pilih Profil Pengirim (Agen)</label>
+    <select id="p_sel" onchange="upd()">
+        <option value="">-- Pilih Profil --</option>
+        <option value="Denda Eliyana|DANA|0858XXXXXX06">DANA </option>
+        <option value="Denda Eliyana|SEABANK|9019XXXXXX90">SEABANK</option>
+        <option value="Denda Eliyana|BRI|4405XXXXXXXXX533">BRI</option>
+         <option value="Denda Eliyana|BANK JAGO|5054XXXXXX67">JAGO</option>
+    </select>
+
+    <div class="row">
+        <div><label>Kertas</label><select id="sz" onchange="render()"><option value="32">58mm</option><option value="48">80mm</option></select></div>
+        <div><label>Biaya Admin</label><input type="number" id="adm" value="5000" oninput="render()"></div>
+    </div>
+
+    <button class="btn-scan" onclick="document.getElementById('fileInp').click()">📷 AMBIL FOTO / SCAN STRUK</button>
+    <input type="file" id="fileInp" hidden accept="image/*">
+    <div id="status">🔄 Menganalisis Struk... <span id="pct">0</span>%</div>
+
+    <div class="card" style="background: #111827;">
+        <label>Detail Transaksi (Hasil Scan)</label>
+              <input type="text" id="r_ref" placeholder="No Referensi" oninput="render()">
+        <input type="text" id="r_nama" placeholder="Nama Penerima" oninput="render()">
+        <div class="row">
+            <input type="text" id="r_bank" placeholder="Bank" oninput="render()">
+            <input type="text" id="r_rek_tuj" placeholder="No Rekening Penerima" oninput="render()">
+        </div>
+        <label>Nominal Transfer</label>
+        <input type="number" id="r_amt" placeholder="Nominal Rp" oninput="render()">
+        <label>Waktu Transaksi</label>
+<input type="text" id="r_tgl" placeholder="Tanggal & Waktu" oninput="render()">
+    </div>
+    </div>
+
+    <div class="preview" id="pv">Menunggu input...</div>
+    <button class="btn-print" onclick="printBT()">🖨️ CETAK</button>
+</div>
+
+<script>
+    let d_nama = "-", d_bank = "-", d_rek = "-";
+
+    function upd() {
+        const v = document.getElementById('p_sel').value;
+        if(v) { [d_nama, d_bank, d_rek] = v.split('|'); render(); }
+    }
+
+    document.getElementById('fileInp').addEventListener('change', async (e) => {
+    const file = e.target.files[0]; if(!file) return;
+    document.getElementById('status').style.display = 'block';
+    try {
+        const res = await Tesseract.recognize(file, 'ind+eng', {
+            logger: m => { if(m.status==='recognizing text') document.getElementById('pct').innerText=Math.round(m.progress*100); }
+        });
+        const t = res.data.text.toUpperCase();
+        
+        // --- LOGIKA SCAN TANGGAL & WAKTU ---
+        // Mencari format: 21/01/2026 atau 21 Jan 2026 atau 2026-01-21
+        const dateReg = /(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})|(\d{1,2}\s(?:JAN|FEB|MAR|APR|MEI|JUN|JUL|AGU|SEP|OKT|NOV|DES)\s\d{4})/i;
+        // Mencari format jam: 18:12 atau 18:12:47
+        const timeReg = /(\d{1,2}[:.]\d{2}(?:[:.]\d{2})?)/;
+        
+        const m_date = t.match(dateReg);
+        const m_time = t.match(timeReg);
+        
+        if(m_date) {
+            let tgl_hasil = m_date[0] + (m_time ? " " + m_time[0] : "");
+            document.getElementById('r_tgl').value = tgl_hasil;
+        } else {
+            // Jika gagal scan, gunakan waktu saat ini
+            document.getElementById('r_tgl').value = new Date().toLocaleString('id-ID').replace(/\//g, '-');
+        }
+
+        // --- LOGIKA SCAN LAINNYA ---
+        const m_amt = t.match(/(?:RP|TOTAL|JUMLAH|AMOUNT|AMT)[\s.:]*([\d.,]{4,})/);
+        if(m_amt) document.getElementById('r_amt').value = m_amt[1].replace(/[.,\s]/g, '');
+
+        const m_ref = t.match(/(?:REF|REFF|ID|TRANS|KODE)[\s.:]*([A-Z0-9\s-]{10,})/);
+        if(m_ref) document.getElementById('r_ref').value = m_ref[1].replace(/\s/g, '').trim();
+
+        const lines = t.split('\n').map(l => l.trim()).filter(l => l.length > 3);
+        lines.forEach((l, i) => {
+            if(l.match(/KE|PENERIMA|TUJUAN|TARGET/)) {
+                document.getElementById('r_nama').value = (lines[i+1] || l).replace(/.*[:]/, '').trim().substring(0,20);
+                let rekMatch = (lines[i+1] + lines[i+2]).match(/\d{8,20}/);
+                if(rekMatch) document.getElementById('r_rek_tuj').value = rekMatch[0];
+            }                        
+            const bks = ["BRI","BCA","MANDIRI","BNI","SEABANK","DANA","GOPAY","OVO","SHOPEEPAY"];
+            bks.forEach(b => { if(l.includes(b)) document.getElementById('r_bank').value = b; });
+        });
+
+        render();
+    } catch (e) { alert("Scan Gagal!"); }
+    document.getElementById('status').style.display = 'none';
+});
+
+    function render() {
+    const w = parseInt(document.getElementById('sz').value);
+    const a = parseInt(document.getElementById('adm').value) || 0;
+    const n = parseInt(document.getElementById('r_amt').value) || 0;
+    const tgl = document.getElementById('r_tgl').value || new Date().toLocaleString('id-ID'); // Ambil dari hasil scan
+    const hr = "-".repeat(w);
+    const f = (id) => document.getElementById(id).value || "-";
+
+    let s = c("BUKTI TRANSFER DIGITAL", w) + "\n" + c(" ", w) + "\n" + hr + "\n";
+    s += j("WAKTU", tgl, w) + "\n"; // Menggunakan variabel tgl hasil scan
+    s += j("REF", f('r_ref').substring(0, w-5), w) + "\n" + hr + "\n";
+    // ... sisa kode render sama seperti sebelumnya ...
+    s += "PENGIRIM:\n" + d_nama + "\n" + d_bank + " (" + d_rek + ")\n\n";
+    s += "PENERIMA:\n" + f('r_nama') + "\n" + f('r_bank') + "\n" + f('r_rek_tuj') + "\n" + hr + "\n";
+    s += j("NOMINAL", "Rp" + n.toLocaleString('id-ID'), w) + "\n";
+    s += j("ADMIN", "Rp" + a.toLocaleString('id-ID'), w) + "\n" + hr + "\n";
+    s += j("TOTAL", "Rp" + (n + a).toLocaleString('id-ID'), w) + "\n" + hr + "\n";
+    s += c("TERIMA KASIH", w) + "\n\n\n";
+    document.getElementById('pv').innerText = s;
+}
+
+    function c(t, w) { return " ".repeat(Math.max(0, Math.floor((w - t.length) / 2))) + t; }
+    function j(l, r, w) { return l + " ".repeat(Math.max(1, w - (l.length + String(r).length))) + r; }
+
+    async function printBT() {
+        const t = document.getElementById('pv').innerText;
+        if (!navigator.bluetooth) return alert("Gunakan Chrome Android!");
+        try {
+            const dev = await navigator.bluetooth.requestDevice({ filters: [{ services: ['000018f0-0000-1000-8000-00805f9b34fb'] }] });
+            const gatt = await dev.gatt.connect();
+            const svc = await gatt.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+            const char = await svc.getCharacteristic('00002af1-0000-1000-8000-00805f9b34fb');
+            await char.writeValue(new Uint8Array([0x1B, 0x40, ...new TextEncoder().encode(t), 0x0A, 0x0A, 0x0A]));
+        } catch (e) { alert("Printer tidak terhubung!"); }
+    }
+    render();
+</script>
+</body>
+</html>
