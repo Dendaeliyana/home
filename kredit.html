@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistem Kredit Dark UI - Google Sheets API</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: #DCEAEA; color: #f0f6fc; padding: 15px; min-height: 100vh; }
+    .container { max-width: 400px; margin: 0 auto; }
+    
+    h1 { font-size: 22px; font-weight: 700; color: #ffffff; }
+    .subtitle { font-size: 13px; color: #8b949e; margin-top: 2px; margin-bottom: 20px; }
+
+    .summary-card {
+      background: #212121;
+      border: 1px solid #30363d;
+      border-top: 3px solid #AB47BC;
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 15px;
+    }
+    .summary-label { font-size: 11px; text-transform: uppercase; color: #8b949e; letter-spacing: 0.5px; font-weight: 600; }
+    .summary-amount { font-size: 28px; font-weight: 700; color: #ffffff; margin: 8px 0 12px 0; }
+    .summary-divider { height: 1px; background-color: #21262d; margin-bottom: 12px; }
+    .summary-subtext { font-size: 13px; color: #8b949e; }
+    .summary-subtext strong { color: #ffffff; }
+
+    .button-group { display: flex; gap: 12px; margin-bottom: 24px; }
+    .btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: opacity 0.2s;
+    }
+    .btn-tambah { background-color: rgba(56, 139, 253, 0.1); border: 1px solid #1f6feb; color: #58a6ff; }
+    .btn-bayar { background-color: rgba(46, 160, 67, 0.1); border: 1px solid #2ea043; color: #3fb950; }
+    .btn:hover { opacity: 0.8; }
+
+    .section-title { font-size: 12px; font-weight: 700; color: #8b949e; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+
+    .card-list { display: flex; flex-direction: column; gap: 8px; }
+    .card-item { background: #757575; border: 1px solid #30363d; border-radius: 8px; padding: 14px; }
+    .card-header { display: flex; justify-content: space-between; font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+    .card-detail { font-size: 12px; color: #BDBDBD; display: flex; justify-content: space-between; margin-top: 0px; }
+    .card-dates { font-size: 11px; color: #212121; margin-top: 4px; border-top: 1px dashed #21262d; padding-top: 4px; display: flex; justify-content: space-between; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); align-items: center; justify-content: center; padding: 15px; }
+    .modal-content { background: #E0E0E0; border: 1px solid #30363d; border-radius: 12px; width: 100%; max-width: 400px; padding: 20px; }
+    .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 15px; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; color: #212121; margin-bottom: 4px; }
+    .form-group input, .form-group select { width: 100%; padding: 8px 12px; background: #757575; border: 1px solid #30363d; border-radius: 6px; color: #fff; font-size: 14px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .modal-actions button { flex: 1; padding: 10px; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; }
+    .btn-submit { background: #238636; color: #fff; }
+    .btn-cancel { background: #E57373; color: #212121; }
+    .loading { text-align: center; color: #8b949e; font-size: 13px; margin-bottom: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="summary-card">
+    <div class="summary-label">TOTAL ANGSURAN</div>
+    <div class="summary-amount" id="totalAngsuran">Rp 0</div>
+    <div class="summary-divider"></div>
+    <div class="summary-subtext">Pelanggan Aktif: <strong id="totalDebitur">0 Orang</strong></div>
+  </div>
+
+  <div class="button-group">
+    <button class="btn btn-tambah" onclick="openModal('modalTambah')">+ Tambah Kredit</button>
+    <button class="btn btn-bayar" onclick="openModal('modalBayar')">✓ Pembayaran</button>
+  </div>
+
+  <div class="section-title">DAFTAR PELANGGAN</div>
+  <div id="loadingStatus" class="loading">Sedang Memuat data ...</div>
+  <div class="card-list" id="daftarTagihan"></div>
+</div>
+
+<!-- Modal Tambah Kredit -->
+<div class="modal" id="modalTambah">
+  <div class="modal-content">
+    <div class="modal-title">Tambah Kredit Baru</div>
+    <div class="form-group"><label>Nama</label><input type="text" id="namaDebitur"></div>
+    <div class="form-group"><label>Tanggal Pinjaman</label><input type="date" id="tglPinjam"></div>
+    <div class="form-group"><label>Pokok Pinjaman (Rp)</label><input type="number" id="pokok"></div>
+    <div class="form-group"><label>Bunga per Bulan (%)</label><input type="number" id="bunga" value="0" step="0.1"></div>
+    <div class="form-group"><label>Tenor (Bulan)</label><input type="number" id="tenor" value="1"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalTambah')">Batal</button>
+      <button class="btn-submit" onclick="tambahKredit()">Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Pembayaran Automatis -->
+<div class="modal" id="modalBayar">
+  <div class="modal-content">
+    <div class="modal-title">Catat Pembayaran</div>
+    <div class="form-group">
+      <label>Pilih Pelanggan</label>
+      <select id="pilihDebitur"></select>
+    </div>
+    <div class="form-group">
+      <label>Denda Keterlambatan (Rp)</label>
+      <input type="number" id="dendaBayar" value="0" placeholder="0 jika tidak ada denda">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('modalBayar')">Batal</button>
+      <button class="btn-submit" onclick="prosesBayar()">Bayar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // PASTE URL WEB APP DARI GOOGLE APPS SCRIPT DI SINI:
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwWo5EuPltrJkUPofxwXGIn-r5cxyfxxAf2ngxTRnlO3Dz2XC0iiB-IgToyDazEVQ7s/exec";
+
+  let dataKredit = [];
+
+  function formatRupiah(angka) {
+    return 'Rp ' + Math.round(angka).toLocaleString('id-ID');
+  }
+
+  document.getElementById('tglPinjam').valueAsDate = new Date();
+
+  window.onload = function() {
+    loadData();
+  };
+
+  function loadData() {
+    document.getElementById('loadingStatus').style.display = 'block';
+    fetch(SCRIPT_URL)
+      .then(res => res.json())
+      .then(data => {
+        dataKredit = data;
+        document.getElementById('loadingStatus').style.display = 'none';
+        render();
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('loadingStatus').innerText = 'Gagal memuat data dari Spreadsheet.';
+      });
+  }
+
+  function openModal(id) {
+    if(id === 'modalBayar') {
+      const select = document.getElementById('pilihDebitur');
+      select.innerHTML = '';
+      dataKredit.forEach((item) => {
+        if(item.sisaBulan > 0) {
+          select.innerHTML += `<option value="${item.rowId}">${item.nama} - ${formatRupiah(item.angsuran)} Ke ${item.sisaBulan}</option>`;
+        }
+      });
+      if(select.children.length === 0) {
+        alert('Tidak ada Pelanggan aktif.');
+        return;
+      }
+      document.getElementById('dendaBayar').value = 0;
+    }
+    document.getElementById(id).style.display = 'flex';
+  }
+
+  function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+  function tambahKredit() {
+    const nama = document.getElementById('namaDebitur').value;
+    const tglPinjam = document.getElementById('tglPinjam').value;
+    const pokok = parseFloat(document.getElementById('pokok').value) || 0;
+    const bunga = parseFloat(document.getElementById('bunga').value) || 0;
+    const tenor = parseInt(document.getElementById('tenor').value) || 1;
+
+    if(!nama || pokok <= 0 || !tglPinjam) { 
+      alert('Lengkapi semua data dengan benar'); 
+      return; 
+    }
+
+    const tglJatuhTempo = parseInt(tglPinjam.split('-')[2], 10);
+    const totalBunga = pokok * (bunga / 100) * tenor;
+    const totalPinjaman = pokok + totalBunga;
+    const angsuranBulan = totalPinjaman / tenor;
+
+    const payload = {
+      action: 'tambah',
+      nama: nama,
+      tglPinjam: tglPinjam,
+      tglJatuhTempo: tglJatuhTempo,
+      angsuran: angsuranBulan,
+      sisaBulan: tenor,
+      sisaHutang: totalPinjaman
+    };
+
+    closeModal('modalTambah');
+    document.getElementById('loadingStatus').style.display = 'block';
+
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(() => loadData());
+  }
+
+  function prosesBayar() {
+    const rowId = document.getElementById('pilihDebitur').value;
+    const denda = parseFloat(document.getElementById('dendaBayar').value) || 0;
+
+    if(rowId) {
+      const payload = {
+        action: 'bayar',
+        rowId: rowId,
+        denda: denda
+      };
+
+      closeModal('modalBayar');
+      document.getElementById('loadingStatus').style.display = 'block';
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(() => loadData());
+    }
+  }
+
+  function render() {
+    const container = document.getElementById('daftarTagihan');
+    container.innerHTML = '';
+    
+    let totalAngsuranBln = 0;
+    let debiturAktif = 0;
+
+    dataKredit.forEach(item => {
+      if(item.sisaBulan > 0) {
+        totalAngsuranBln += parseFloat(item.angsuran);
+        debiturAktif++;
+      }
+
+      container.innerHTML += `
+        <div class="card-item">
+          <div class="card-header">
+            <span>${item.nama}</span>
+            <span>${formatRupiah(item.angsuran)} / bln</span>
+          </div>
+          <div class="card-detail">
+            <span>Sisa Tenor: ${item.sisaBulan} Bulan</span>
+            <span>Sisa Tagihan: ${formatRupiah(item.sisaHutang)}</span>
+          </div>
+          <div class="card-dates">
+        
+            <span>Tempo: Tgl ${item.tglJatuhTempo} / bln</span>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById('totalAngsuran').innerText = formatRupiah(totalAngsuranBln);
+    document.getElementById('totalDebitur').innerText = debiturAktif + ' Orang';
+  }
+</script>
+
+</body>
+</html>
