@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Denda Cell</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; user-select: none; }
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-slate-950 font-sans text-slate-800 flex justify-center min-h-screen">
+
+    <div class="w-full max-w-md bg-slate-100 min-h-screen flex flex-col justify-start relative shadow-2xl pb-20">
+        
+ <header class="bg-gradient-to-b from-slate-900 to-indigo-950 text-white px-3 pt-6 pb-4 rounded-b-[1rem] shadow-xl relative z-1">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 font-bold">
+                        <img src="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png" alt="Gambar" width="300">
+                    </div>
+                    <div>
+                        <h2 class="text-base font-extrabold text-white">Catatan Utang</h2>
+                        <p class="text-[11px] text-slate-400">Denda Cell</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openTambahPelangganModal()" class="px-2.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold flex items-center gap-1 transition shadow-md">
+                        <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Pelanggan
+                    </button>
+                    <button onclick="loadDataFromSheets()" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 flex items-center justify-center text-slate-200">
+                        <i data-lucide="rotate-cw" class="w-4 h-4" id="refreshIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Card Total Ringkasan -->
+            <div class="bg-gradient-to-br from-rose-600 via-rose-700 to-slate-900 rounded-2xl p-4 text-white shadow-lg border border-rose-400/30">
+                <div class="flex justify-between items-center mb-1">
+                    <span id="labelTotalRingkasan" class="text-xs font-semibold text-rose-200 uppercase tracking-wider">Total Belum Lunas</span>
+                    <span id="totalOrang" class="text-[10px] bg-rose-400/20 text-rose-200 font-bold px-2 py-0.5 rounded-full border border-rose-400/30">0 Orang</span>
+                </div>
+                <div id="totalUtang" class="text-2xl font-black tracking-tight">Rp 0</div>
+            </div>
+
+            <!-- Kolom Pencarian -->
+            <div class="mt-4 relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                <input type="text" id="searchInput" onkeyup="filterPelanggan()" placeholder="Cari nama pelanggan..." 
+                    class="w-full bg-slate-800/80 border border-white/10 text-white text-xs rounded-xl pl-9 pr-4 py-2.5 focus:outline-none placeholder-slate-400">
+            </div>
+        </header>
+
+        <!-- Menu Filter Tampilan -->
+        <div class="px-5 pt-4">
+            <div class="flex items-center gap-2 overflow-x-auto pb-1">
+                <button onclick="setFilter('utang')" id="filterUtang" class="filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-rose-600 text-white transition shadow-xs">
+                    Utang
+                </button>
+                <button onclick="setFilter('tabungan')" id="filterTabungan" class="filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-slate-200 text-slate-600 hover:bg-slate-300 transition">
+                    Tabungan
+                </button>
+                <button onclick="setFilter('semua')" id="filterSemua" class="filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-slate-200 text-slate-600 hover:bg-slate-300 transition">
+                    Semua
+                </button>
+            </div>
+        </div>
+
+        <!-- Daftar Pelanggan Utama -->
+        <main class="px-3 pt-3 space-y-1 flex-1 relative z-20" id="daftarPelanggan">
+            <p class="text-center text-xs text-slate-400 my-10 animate-pulse">Memuat data...</p>
+        </main>
+
+        <!-- Floating Action Button (Tambah Transaksi) -->
+<button onclick="openTambahTrxModal()" 
+            class="fixed bottom-6 right-6 z-40 bg-gradient-to-b from-slate-900 to-indigo-950 text-white w-10 h-10 rounded-full shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition border-2 border-white/20">
+            <i data-lucide="plus" class="w-5 h-5"></i>
+        </button>
+    </div>
+
+    <!-- AUTOCOMPLETE MASTER NAMA -->
+    <datalist id="daftarNamaPelangganMaster"></datalist>
+
+    <!-- MODAL 1: TAMBAH PELANGGAN MASTER -->
+    <div id="modalPelangganOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity">
+        <div id="modalPelangganCard" class="w-full max-w-md bg-white rounded-t-[2.5rem] p-6 shadow-2xl transform translate-y-full transition-transform">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-indigo-600"></i>
+                    Tambah Pelanggan Baru
+                </h3>
+                <button onclick="closeModal('modalPelangganOverlay', 'modalPelangganCard')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <form onsubmit="simpanPelangganBaru(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Nama Pelanggan</label>
+                    <input type="text" id="inputNamaPelangganBaru" required placeholder="Contoh: Pak Budi" 
+                        class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-600">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">No. WhatsApp / HP</label>
+                    <input type="tel" id="inputHpPelangganBaru" placeholder="Contoh: 081234567890" 
+                        class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-600">
+                </div>
+                <button type="submit" id="btnSubmitPelanggan" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-2xl shadow-lg transition">
+                    Simpan Pelanggan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: TAMBAH TRANSAKSI -->
+    <div id="modalTrxOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity">
+        <div id="modalTrxCard" class="w-full max-w-md bg-white rounded-t-[2.5rem] p-6 shadow-2xl transform translate-y-full transition-transform">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                    <i data-lucide="plus-circle" class="w-5 h-5 text-indigo-600"></i>
+                    Catat Transaksi
+                </h3>
+                <button onclick="closeModal('modalTrxOverlay', 'modalTrxCard')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <form onsubmit="simpanTransaksi(event)" class="space-y-3">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1.5">Tipe Transaksi</label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-2xl">
+                        <button type="button" id="btnMasuk" onclick="setTipe('masuk')" 
+                            class="py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md">
+                            <i data-lucide="arrow-down-left" class="w-4 h-4"></i> Masuk (Utang)
+                        </button>
+                        <button type="button" id="btnKeluar" onclick="setTipe('keluar')" 
+                            class="py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-500">
+                            <i data-lucide="arrow-up-right" class="w-4 h-4"></i> Keluar (Bayar)
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Pilih Nama Pelanggan</label>
+                    <input type="text" id="inputNamaTrx" list="daftarNamaPelangganMaster" required placeholder="Ketik/Pilih nama..." 
+                        class="w-full bg-slate-50 border border-slate-200 text-xs font-bold rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Nominal (Rp)</label>
+                    <input type="number" id="inputNominal" required placeholder="0" 
+                        class="w-full bg-slate-50 border border-slate-200 text-sm font-black rounded-xl px-3.5 py-2.5 text-slate-900 focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Tanggal & Waktu</label>
+                    <input type="datetime-local" id="inputTanggal" required 
+                        class="w-full bg-slate-50 border border-slate-200 text-xs font-semibold rounded-xl px-3.5 py-2.5 text-slate-700 focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-400 uppercase mb-1">Keterangan / Produk</label>
+                    <input type="text" id="inputKeterangan" placeholder="Contoh: Pulsa 50k, Token PLN..." 
+                        class="w-full bg-slate-50 border border-slate-200 text-xs rounded-xl px-3.5 py-2.5 text-slate-800 focus:outline-none focus:border-indigo-600">
+                </div>
+
+                <button type="submit" id="btnSubmitTrx" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-2xl shadow-lg transition">
+                    Simpan Transaksi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: DETAIL PELANGGAN & RIWAYAT -->
+    <div id="modalDetailOverlay" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end justify-center hidden opacity-0 transition-opacity">
+        <div id="modalDetailCard" class="w-full max-w-md bg-white rounded-t-[2.5rem] p-6 shadow-2xl transform translate-y-full transition-transform max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div id="popAvatar" class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 font-black flex items-center justify-center text-base">A</div>
+                    <div>
+                        <h3 id="popNama" class="text-base font-extrabold text-slate-900">Nama Pelanggan</h3>
+                        <p id="popUtang" class="text-xs font-extrabold text-rose-600">Rp 0</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('modalDetailOverlay', 'modalDetailCard')" class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <!-- Tombol Aksi Riwayat -->
+            <div class="grid grid-cols-3 gap-2 my-4">
+                <button onclick="lunaskanPelanggan(event)" class="flex items-center justify-center gap-1.5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-sm">
+                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Lunaskan
+                </button>
+                <button onclick="sharePelanggan()" class="flex items-center justify-center gap-1.5 py-2.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold hover:bg-blue-100 transition">
+                    <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Kirim WA
+                </button>
+                <button onclick="hapusPelanggan()" class="flex items-center justify-center gap-1.5 py-2.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-xl text-xs font-bold hover:bg-rose-100 transition">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Hapus
+                </button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto pr-1">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Riwayat Transaksi:</p>
+                <div id="popTrxList" class="space-y-2"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT UTAMA -->
+    <script>
+        // GANTI URL DI BAWAH DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA (/exec)
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx-w_lARsdX4PG9agQ5Zpxwr8HumXFLU2Jbb_pXjTF8nGZD0JnR4bPYDXOepKYR94aCRw/exec";
+
+        let masterCustomers = [];
+        let rawTransactions = [];
+        let groupedData = {};
+        let currentTipe = 'masuk';
+        let currentFilter = 'utang'; // 'utang', 'tabungan', 'semua'
+        let activePelanggan = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            lucide.createIcons();
+            loadDataFromSheets();
+        });
+
+        // 1. FETCH DATA DARI GOOGLE SHEETS
+        async function loadDataFromSheets() {
+            const container = document.getElementById('daftarPelanggan');
+            const icon = document.getElementById('refreshIcon');
+            if(icon) icon.classList.add('animate-spin');
+
+            try {
+                const res = await fetch(WEB_APP_URL);
+                const result = await res.json();
+
+                if (result.status === "success") {
+                    masterCustomers = result.data.customers || [];
+                    rawTransactions = result.data.transactions || [];
+                    renderMasterCustomersDropdown();
+                    processAndRenderData();
+                } else {
+                    container.innerHTML = `<p class="text-center text-xs text-rose-500 my-10">Error: ${result.message}</p>`;
+                }
+            } catch (err) {
+                container.innerHTML = `<p class="text-center text-xs text-rose-500 my-10">Gagal terhubung ...</p>`;
+            } finally {
+                if(icon) icon.classList.remove('animate-spin');
+            }
+        }
+
+        // 2. RENDER MASTER DROPDOWN (URUT A-Z)
+        function renderMasterCustomersDropdown() {
+            const datalist = document.getElementById('daftarNamaPelangganMaster');
+            datalist.innerHTML = '';
+            
+            const sortedMaster = [...masterCustomers].sort((a, b) => 
+                a.nama.localeCompare(b.nama, 'id', { sensitivity: 'base' })
+            );
+
+            sortedMaster.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.nama;
+                datalist.appendChild(opt);
+            });
+        }
+
+        // 3. PENGATUR FILTER TAMPILAN
+        function setFilter(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = 'filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-slate-200 text-slate-600 hover:bg-slate-300 transition';
+            });
+            
+            if (filter === 'utang') {
+                document.getElementById('filterUtang').className = 'filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-rose-600 text-white transition shadow-xs';
+            } else if (filter === 'tabungan') {
+                document.getElementById('filterTabungan').className = 'filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-emerald-600 text-white transition shadow-xs';
+            } else {
+                document.getElementById('filterSemua').className = 'filter-btn text-xs font-bold px-3.5 py-1.5 rounded-xl bg-slate-800 text-white transition shadow-xs';
+            }
+
+            processAndRenderData();
+        }
+
+        // 4. OLAH & TAMPILKAN DATA DI DASBOR (URUT A-Z & FILTER)
+        function processAndRenderData() {
+            groupedData = {};
+            let grandTotalUtang = 0;
+            let grandTotalTabungan = 0;
+            let totalOrangTampil = 0;
+
+            masterCustomers.forEach(c => {
+                groupedData[c.nama] = { nama: c.nama, hp: c.hp, totalUtang: 0, lastDate: '-', trxList: [] };
+            });
+
+            rawTransactions.forEach(item => {
+                const nama = item.nama.trim();
+                if (!groupedData[nama]) {
+                    groupedData[nama] = { nama: nama, hp: '', totalUtang: 0, lastDate: item.tanggal, trxList: [] };
+                }
+                const val = Number(item.nominal) || 0;
+                if (item.tipe === 'masuk') {
+                    groupedData[nama].totalUtang += val;
+                } else {
+                    groupedData[nama].totalUtang -= val;
+                }
+                groupedData[nama].trxList.push(item);
+                groupedData[nama].lastDate = item.tanggal;
+            });
+
+            const container = document.getElementById('daftarPelanggan');
+            container.innerHTML = '';
+
+            const sortedKeys = Object.keys(groupedData).sort((a, b) => 
+                a.localeCompare(b, 'id', { sensitivity: 'base' })
+            );
+
+            const filteredKeys = sortedKeys.filter(nama => {
+                const saldo = groupedData[nama].totalUtang;
+                if (currentFilter === 'utang') return saldo > 0;
+                if (currentFilter === 'tabungan') return saldo < 0;
+                return true; // Mode 'semua' menampilkan seluruh pelanggan master
+            });
+
+            if (filteredKeys.length === 0) {
+                container.innerHTML = `<p class="text-center text-xs text-slate-400 my-10">Belum Ada Data.</p>`;
+                document.getElementById('totalUtang').textContent = "Rp 0";
+                document.getElementById('totalOrang').textContent = "0 Orang";
+                return;
+            }
+
+            filteredKeys.forEach(nama => {
+                const data = groupedData[nama];
+                const saldo = data.totalUtang;
+                totalOrangTampil++;
+
+                let statusBadge = '';
+                let nominalText = '';
+                let colorClass = '';
+                let avatarBg = '';
+
+                if (saldo > 0) {
+                    grandTotalUtang += saldo;
+                    statusBadge = `<span class="text-[9px] bg-rose-100 text-rose-700 px-1.5 py-0.5 rounded-md font-bold">Utang</span>`;
+                    nominalText = `Rp ${formatRupiah(saldo)}`;
+                    colorClass = 'text-rose-600';
+                    avatarBg = 'bg-amber-100 text-amber-800';
+                } else if (saldo < 0) {
+                    const tabunganVal = Math.abs(saldo);
+                    grandTotalTabungan += tabunganVal;
+                    statusBadge = `<span class="text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-md font-bold">Tabungan</span>`;
+                    nominalText = `+Rp ${formatRupiah(tabunganVal)}`;
+                    colorClass = 'text-emerald-600';
+                    avatarBg = 'bg-emerald-100 text-emerald-800';
+                } else {
+                    statusBadge = `<span class="text-[9px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-md font-bold">Lunas</span>`;
+                    nominalText = `Rp 0`;
+                    colorClass = 'text-slate-500';
+                    avatarBg = 'bg-slate-100 text-slate-700';
+                }
+
+                container.innerHTML += `
+                    <div class="pelanggan-item bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:bg-slate-50 p-3.5 flex items-center justify-between cursor-pointer transition"
+                         onclick="openDetailModal('${nama}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl ${avatarBg} font-bold flex items-center justify-center text-sm">${nama.charAt(0).toUpperCase()}</div>
+                            <div>
+                                <h4 class="nama-pelanggan text-xs font-extrabold text-slate-900">${nama}</h4>
+                                <p class="text-[10px] text-slate-400">Tgl: ${formatTanggal(data.lastDate)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-xs font-black ${colorClass}">${nominalText}</p>
+                            ${statusBadge}
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update Header Angka
+            if (currentFilter === 'tabungan') {
+                document.getElementById('labelTotalRingkasan').textContent = "Total Tabungan";
+                document.getElementById('totalUtang').textContent = `+Rp ${formatRupiah(grandTotalTabungan)}`;
+            } else {
+                document.getElementById('labelTotalRingkasan').textContent = "Total Belum Lunas";
+                document.getElementById('totalUtang').textContent = `Rp ${formatRupiah(grandTotalUtang)}`;
+            }
+            document.getElementById('totalOrang').textContent = `${totalOrangTampil} Orang`;
+        }
+
+        // 5. SIMPAN PELANGGAN BARU
+        async function simpanPelangganBaru(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitPelanggan');
+            btn.disabled = true;
+            btn.textContent = "Menyimpan...";
+
+            const payload = {
+                action: "ADD_CUSTOMER",
+                nama: document.getElementById('inputNamaPelangganBaru').value.trim(),
+                hp: document.getElementById('inputHpPelangganBaru').value.trim()
+            };
+
+            try {
+                const res = await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+                const result = await res.json();
+                if(result.status === "success") {
+                    closeModal('modalPelangganOverlay', 'modalPelangganCard');
+                    document.getElementById('inputNamaPelangganBaru').value = '';
+                    document.getElementById('inputHpPelangganBaru').value = '';
+                    await loadDataFromSheets();
+                } else {
+                    alert(result.message);
+                }
+            } catch (err) {
+                alert("Gagal menyimpan pelanggan");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Simpan Pelanggan ke Sheet";
+            }
+        }
+
+        // 6. SIMPAN TRANSAKSI
+        async function simpanTransaksi(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitTrx');
+            btn.disabled = true;
+            btn.textContent = "Menyimpan...";
+
+            const payload = {
+                action: "ADD_TRANSACTION",
+                nama: document.getElementById('inputNamaTrx').value.trim(),
+                nominal: document.getElementById('inputNominal').value,
+                tanggal: document.getElementById('inputTanggal').value,
+                tipe: currentTipe,
+                keterangan: document.getElementById('inputKeterangan').value.trim()
+            };
+
+            try {
+                await fetch(WEB_APP_URL, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload) 
+                });
+                closeModal('modalTrxOverlay', 'modalTrxCard');
+                document.getElementById('inputNominal').value = '';
+                document.getElementById('inputKeterangan').value = '';
+                await loadDataFromSheets();
+            } catch (err) {
+                alert("Gagal menyimpan transaksi");
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Simpan Transaksi";
+            }
+        }
+
+        // 7. LUNASKAN PELANGGAN
+        async function lunaskanPelanggan(e) {
+            if (!activePelanggan) return;
+
+            if (activePelanggan.totalUtang <= 0) {
+                alert(`Utang atas nama ${activePelanggan.nama} sudah lunas atau memiliki saldo tabungan.`);
+                return;
+            }
+
+            const total = activePelanggan.totalUtang;
+            if (!confirm(`Konfirmasi pelunasan untuk ${activePelanggan.nama} sebesar Rp ${formatRupiah(total)}?`)) return;
+
+            const btn = event ? event.currentTarget : null;
+            let originalHTML = "";
+            if (btn) {
+                originalHTML = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = `<span>Proses...</span>`;
+            }
+
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            const tanggalStr = now.toISOString().slice(0, 16);
+
+            const payload = {
+                action: "ADD_TRANSACTION",
+                nama: activePelanggan.nama,
+                nominal: total,
+                tanggal: tanggalStr,
+                tipe: "keluar",
+                keterangan: "Pelunasan Utang (Lunas)"
+            };
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                closeModal('modalDetailOverlay', 'modalDetailCard');
+                await loadDataFromSheets();
+                alert(`Utang ${activePelanggan.nama} berhasil dilunaskan!`);
+            } catch (err) {
+                alert("Gagal memproses pelunasan.");
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = originalHTML;
+                    lucide.createIcons();
+                }
+            }
+        }
+
+        // 8. HAPUS PELANGGAN
+        async function hapusPelanggan() {
+            if (!activePelanggan) return;
+            if (confirm(`Hapus seluruh data pelanggan ${activePelanggan.nama} beserta riwayat transaksinya?`)) {
+                try {
+                    await fetch(WEB_APP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ action: "DELETE_CUSTOMER", nama: activePelanggan.nama })
+                    });
+                    closeModal('modalDetailOverlay', 'modalDetailCard');
+                    await loadDataFromSheets();
+                } catch (e) {
+                    alert("Gagal menghapus data");
+                }
+            }
+        }
+
+        // UTILITY MODAL & UI HANDLERS
+        function openTambahTrxModal() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('inputTanggal').value = now.toISOString().slice(0, 16);
+            openModal('modalTrxOverlay', 'modalTrxCard');
+        }
+
+        function openTambahPelangganModal() {
+            openModal('modalPelangganOverlay', 'modalPelangganCard');
+        }
+
+        function openDetailModal(nama) {
+            activePelanggan = groupedData[nama];
+            if (!activePelanggan) return;
+
+            document.getElementById('popNama').textContent = activePelanggan.nama;
+            document.getElementById('popAvatar').textContent = activePelanggan.nama.charAt(0).toUpperCase();
+
+            let displaySaldo = activePelanggan.totalUtang;
+            if (displaySaldo > 0) {
+                document.getElementById('popUtang').textContent = "Total Utang: Rp " + formatRupiah(displaySaldo);
+                document.getElementById('popUtang').className = "text-xs font-extrabold text-rose-600";
+            } else if (displaySaldo < 0) {
+                document.getElementById('popUtang').textContent = "Tabungan: +Rp " + formatRupiah(Math.abs(displaySaldo));
+                document.getElementById('popUtang').className = "text-xs font-extrabold text-emerald-600";
+            } else {
+                document.getElementById('popUtang').textContent = "Status: Lunas (Rp 0)";
+                document.getElementById('popUtang').className = "text-xs font-extrabold text-slate-500";
+            }
+
+            const listContainer = document.getElementById('popTrxList');
+            listContainer.innerHTML = '';
+
+            [...activePelanggan.trxList].reverse().forEach(item => {
+                const isPlus = item.tipe === 'masuk';
+                const colorClass = isPlus ? 'text-rose-600' : 'text-emerald-600';
+                const sign = isPlus ? '+' : '-';
+
+                listContainer.innerHTML += `
+                    <div class="flex justify-between items-center bg-slate-50 p-3 rounded-2xl border border-slate-100 text-xs">
+                        <div>
+                            <p class="font-bold text-slate-800">${item.keterangan || (isPlus ? 'Utang' : 'Bayar')}</p>
+                            <p class="text-[10px] text-slate-400">${formatTanggal(item.tanggal)}</p>
+                        </div>
+                        <span class="font-extrabold ${colorClass}">${sign}Rp ${formatRupiah(item.nominal)}</span>
+                    </div>`;
+            });
+
+            openModal('modalDetailOverlay', 'modalDetailCard');
+        }
+
+        function openModal(overlayId, cardId) {
+            const overlay = document.getElementById(overlayId);
+            const card = document.getElementById(cardId);
+            overlay.classList.remove('hidden');
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0');
+                card.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeModal(overlayId, cardId) {
+            const overlay = document.getElementById(overlayId);
+            const card = document.getElementById(cardId);
+            card.classList.add('translate-y-full');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => overlay.classList.add('hidden'), 250);
+        }
+
+        function setTipe(tipe) {
+            currentTipe = tipe;
+            document.getElementById('btnMasuk').className = tipe === 'masuk'
+                ? "py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-rose-600 text-white shadow-md"
+                : "py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-500";
+            document.getElementById('btnKeluar').className = tipe === 'keluar'
+                ? "py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 bg-emerald-600 text-white shadow-md"
+                : "py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 text-slate-500";
+        }
+
+        function sharePelanggan() {
+            if (!activePelanggan) return;
+            const statusLabel = activePelanggan.totalUtang > 0 ? `Total Tagihan: *Rp ${formatRupiah(activePelanggan.totalUtang)}*` : `Saldo Tabungan: *Rp ${formatRupiah(Math.abs(activePelanggan.totalUtang))}*`;
+            const teks = `*CATATAN KEANGAN - DENDA CELL*\n\nNama: ${activePelanggan.nama}\n${statusLabel}\n\nTerima kasih 🙏`;
+            window.open(`https://wa.me/${activePelanggan.hp ? activePelanggan.hp.replace(/^0/, '62') : ''}?text=${encodeURIComponent(teks)}`, '_blank');
+        }
+
+        function filterPelanggan() {
+            const input = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.pelanggan-item').forEach(item => {
+                const nama = item.querySelector('.nama-pelanggan').textContent.toLowerCase();
+                item.style.display = nama.includes(input) ? "flex" : "none";
+            });
+        }
+
+        function formatRupiah(val) { return (val || 0).toLocaleString('id-ID'); }
+        function formatTanggal(str) {
+            if (!str || str === '-') return '-';
+            const d = new Date(str);
+            return isNaN(d) ? str : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        }
+    </script>
+</body>
+</html>
