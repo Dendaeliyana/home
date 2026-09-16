@@ -610,7 +610,8 @@
         function sharePelanggan() {
             if (!activePelanggan) return;
             const statusLabel = activePelanggan.totalUtang > 0 ? `Total Tagihan: *Rp ${formatRupiah(activePelanggan.totalUtang)}*` : `Saldo Tabungan: *Rp ${formatRupiah(Math.abs(activePelanggan.totalUtang))}*`;
-            const teks = `*CATATAN KEANGAN - DENDA CELL*\n\nNama: ${activePelanggan.nama}\n${statusLabel}\n\nTerima kasih 🙏`;
+            const teks = `*CATATAN KEUANGAN - DENDA CELL*\n\nTotal Tagihan kamu sebesar \n${statusLabel}, yuk bayarkan.\n\n
+> Abaikan pesan ini jika sudah melakukan pembayaran `;
             window.open(`https://wa.me/${activePelanggan.hp ? activePelanggan.hp.replace(/^0/, '62') : ''}?text=${encodeURIComponent(teks)}`, '_blank');
         }
 
