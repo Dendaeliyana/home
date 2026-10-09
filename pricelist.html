@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<link rel="icon" href="https://raw.githubusercontent.com/Dendaeliyana/Home/refs/heads/main/1000041406.png.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PRICE LIST DENDA CELL</title>
+  <style>        
+    :root {
+      --bg-dark: #121212;
+      --card-bg: #1e1e1e;
+      --theme-color: #ffeb3b; /* Warna tema default (Kuning Indosat) */
+      --theme-text: #000000;  /* Warna teks di atas warna tema */
+      --text-light: #ffffff;
+      --border-color: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-light);
+      padding-bottom: 40px;
+    }
+
+    /* Header Styling */
+    header {
+      background-color: #000000;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid var(--theme-color);
+      transition: border-color 0.4s ease;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .provider-badge {
+      color: var(--theme-text);
+      transition: background 0.4s ease, color 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+        .logo {
+      background: var(--theme-color);
+      padding: 1px 1px;
+      border-radius: 50px;
+      transition: background 0.4s ease, color 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .provider-badge img {
+      max-height: 30px;
+      max-width: 90px;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: bold;
+      color: var(--theme-color);
+      letter-spacing: 0px;
+      transition: color 0.4s ease;
+    }
+
+    .brand-subtitle {
+      font-size: 9px;
+      color: #aaa;
+    }
+
+    /* Navigation Bar */
+    nav {
+      background-color: #1a1a1a;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .menu {
+      display: flex;
+      list-style: none;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .menu-item {
+      position: relative;
+    }
+
+    .menu-item > a {
+      display: block;
+      padding: 14px 20px;
+      color: var(--text-light);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    .menu-item:hover > a {
+      background-color: var(--theme-color);
+      color: var(--theme-text);
+    }
+
+    /* Dropdown Sub-menu */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #222222;
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+      list-style: none;
+      z-index: 200;
+      border: 1px solid var(--border-color);
+    }
+
+    .menu-item:hover .dropdown {
+      display: block;
+    }
+
+    .dropdown li a {
+      display: block;
+      padding: 10px 15px;
+      color: #ddd;
+      text-decoration: none;
+      font-size: 13px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .dropdown li a:hover {
+      background-color: var(--theme-color);
+      color: var(--theme-text);
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 10px;
+    }
+
+    .active-category-title {
+      text-align: center;
+      color: var(--theme-color);
+      margin-bottom: 15px;
+      font-size: 22px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: color 0.4s ease;
+    }
+
+    /* Pricing Section / Table Styling */
+    .price-group {
+      margin-bottom: 25px;
+      border: 1px solid var(--theme-color);
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #000;
+      transition: border-color 0.4s ease;
+    }
+
+    .group-header {
+      background-color: var(--theme-color);
+      color: var(--theme-text);
+      text-align: center;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--theme-color);
+      color: var(--theme-text);
+      padding: 6px 10px;
+      font-size: 13px;
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
+
+    td {
+      padding: 8px 10px;
+      font-size: 13px;
+      border-bottom: 1px solid #222;
+      color: #fff;
+    }
+
+    tr:nth-child(even) {
+      background-color: #111;
+    }
+
+    .col-paket { width: 60%; }
+    .col-aktif { width: 20%; text-align: center; }
+    .col-harga { width: 20%; text-align: right; font-weight: bold; }
+
+    th.col-aktif, th.col-harga { text-align: center; }
+
+    /* Footer / Note */
+    footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+      font-style: italic;
+    }
+
+    /* Loader */
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--theme-color);
+      font-size: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+      .menu-item > a {
+        padding: 10px 12px;
+        font-size: 12px;
+      }
+      td, th {
+        font-size: 11px;
+        padding: 6px 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <div class="brand-logo">
+    <img src="https://raw.githubusercontent.com/Dendaeliyana/home/refs/heads/main/20261008_200708.png" alt="Gambar" width="60" id="logo" class="logo">
+
+      <div>
+        <div id="brand-title" class="brand-title">DENDA CELL</div>
+        <div class="brand-subtitle">Pulsa Paket Data & PPOB</div>
+      </div>
+        <div id="provider-badge" class="provider-badge">   
+        INDOSAT           
+        </div>      
+    </div>
+  </header>
+<marquee behavior="alternate"><h6>PRICELIST DENDA CELL</h6></marquee>
+  <!-- Navigation Menu -->
+  <nav>
+    <ul class="menu">
+      <li class="menu-item">
+        <a href="#">📡  PAKET DATA </a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="filterData('Axis')">AXIS</a></li>
+           <li><a href="#" onclick="filterData('BAYU')">BAY'U</a></li>
+          <li><a href="#" onclick="filterData('Indosat')">INDOSAT</a></li>
+           <li><a href="#" onclick="filterData('Smartfren')">SMARTFREN</a></li>
+          <li><a href="#" onclick="filterData('Telkomsel')">TELKOMSEL</a></li>
+           <li><a href="#" onclick="filterData('Tri')">TRI</a></li>
+           <li><a href="#" onclick="filterData('XL')">XL</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <a href="#">🖥  PAKET TV </a>
+        <ul class="dropdown">
+          <li><a href="#" onclick="filterData('NEXTPARABOLA')">NEXTPARABOLA</a></li>
+          <li><a href="#" onclick="filterData('KVISION')">K-VISION</a></li>
+        </ul>
+      </li>
+      <li class="menu-item">
+        <a href="#">🎮  TOPUP GAME </a>
+        <ul class="dropdown">
+           <li><a href="#" onclick="filterData('AOV')">AOV</a></li>
+          <li><a href="#" onclick="filterData('FREEFIRE')">FREE FIRE</a></li>
+          <li><a href="#" onclick="filterData('ML')">MOBILE LEGENDS</a></li>
+          <li><a href="#" onclick="filterData('PUBG')">PUBG</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Content Container -->
+  <div class="container">
+    <h4 id="current-title" class="active-category-title">      
+        INDOSAT
+      </h4>
+    <div id="content-area">
+      <div class="loading">Memuat data...</div>
+    </div>
+    <footer>
+      " Harga dapat berubah sewaktu-waktu "
+      <p>&copy;<script>document.write(new Date().getFullYear());</script> Denda_Cell.</p>
+      
+    </footer>
+  </div>
+
+  <script>
+    // Config Warna dan Logo Resmi Setiap Provider/Kategori
+    const providerConfig = {
+      'Indosat': {
+        color: '#ffeb3b', // Kuning Indosat
+        textColor: '#000000',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/0/08/Indosat_Ooredoo_logo_%282019%29.svg?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=original'
+      },
+      'XL': {
+        color: '#00529c', // Biru XL
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/id/thumb/5/55/XL_logo_2016.svg/500px-XL_logo_2016.svg.png'
+      },
+      'Axis': {
+        color: '#8e24aa', // Ungu Axis
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Axis_logo_2015.svg/500px-Axis_logo_2015.svg.png'
+      },
+      'Tri': {
+        color: '#ff5722', // Oranye/Merah Tri
+        textColor: '#ffffff',
+        logo: 'https://pict.sindonews.com/webp/480/pena/news/2022/01/26/207/668233/2-cara-tukar-poin-tri-dengan-kuota-data-tanpa-pakai-ribet-nbm.webp'
+      },
+      'Telkomsel': {
+        color: '#ed1d25', // Merah Telkomsel
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/b/bc/Telkomsel_2021_icon.svg'
+      },
+      'Smartfren': {
+        color: '#e91e63', // Merah Muda Smartfren
+        textColor: '#ffffff',
+        logo: 'https://siplah.blibli.com/data/images/SACE-0031-00032/d48d6f57-7273-416a-9aab-49625e21f03f.png'
+      },      
+      'BAYU': {
+        color: '#808080', // Abu abu byu
+        textColor: '#ffffff',
+        logo: 'https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Byu-logo-blue.svg/1280px-Byu-logo-blue.svg.png?utm_source=id.wikipedia.org&utm_campaign=index&utm_content=thumbnail'
+      },
+      'NEXTPARABOLA': {
+        color: '#ff9800', // Oranye NexParabola
+        textColor: '#000000',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Nex_Parabola_logo_2023.png'
+      },
+      'KVISION': {
+        color: '#00529c', // Biru K-Vision
+        textColor: '#ffffffscrip',
+        logo: 'https://upload.wikimedia.org/wikipedia/commons/e/ea/K-VISION.png'
+      },
+      'ML': {
+        color: '#2196f3', // Biru Game ML
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/id/9/9e/Mobilelegends.png'
+      },
+      'FREEFIRE': {
+        color: '#ff9800', // Oranye FF
+        textColor: '#000000',
+        logo: 'https://dl.dir.freefiremobile.com/common/web_event/hash/970f34cf4cd1a7b8b1a09e28067f167agif'
+      },
+      'PUBG': {
+        color: '#f44336', // Merah PUBG
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/fr/thumb/a/ad/PlayerUnknown%27s_Battlegrounds_Logo.svg/langfr-500px-PlayerUnknown%27s_Battlegrounds_Logo.svg.png?utm_source=fr.wikipedia.org&utm_campaign=parser&utm_content=thumbnail'
+      },
+      'AOV': {
+        color: '#3f51b5', // Biru Tua AOV
+        textColor: '#ffffff',
+        logo: 'https://upload.wikimedia.org/wikipedia/en/e/ef/Arena_of_Valor_Logo_2021.png?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail_unscaled'
+      }
+    };
+
+    // URL Google Sheet App Script Web App Anda
+    const SPREADSHEET_API_URL = 'https://script.google.com/macros/s/AKfycbybnl_MOV6AbXK_vJ3kLpJp2n5_8EpGITQ3LlFD7A3uLwm7MfR3uhl3CIW_TRBMi8bl/exec';
+
+    let globalData = [];
+    let currentProvider = 'Indosat';
+
+    // Fungsi untuk memperbarui warna tema dan logo pada website
+    function updateTheme(providerName) {
+      const config = providerConfig[providerName] || { color: '#ffeb3b', textColor: '#000000', logo: '' };
+      
+      // Update variabel warna CSS
+      document.documentElement.style.setProperty('--theme-color', config.color);
+      document.documentElement.style.setProperty('--theme-text', config.textColor);
+
+      // Update Badge / Logo
+      const badge = document.getElementById('provider-badge');
+      if (config.logo) {
+        badge.innerHTML = `<img src="${config.logo}" alt="${providerName}">`;
+      } else {
+        badge.innerText = providerName;
+      }
+    }
+
+    // Mengambil Data Real-Time dari Google Sheets API
+    async function fetchData() {
+      try {
+        const response = await fetch(SPREADSHEET_API_URL);
+        globalData = await response.json();
+        renderTables(currentProvider);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById('content-area').innerHTML = 
+          '<div style="text-align:center; color:red; padding:20px;">Gagal memuat data. Pastikan Anda Terhubung dengan Internet.</div>';
+      }
+    }
+
+    // Menampilkan Data Berdasarkan Provider/Kategori yang Dipilih
+    function filterData(providerName) {
+      currentProvider = providerName;
+      document.getElementById('current-title').innerText = providerName;
+      
+      // Ubah warna dan logo sesuai provider
+      updateTheme(providerName);
+      
+      // Render ulang data tabel
+      renderTables(providerName);
+    }
+
+    // Render Tabel
+    function renderTables(provider) {
+      const container = document.getElementById('content-area');
+      container.innerHTML = '';
+
+      // Filter data sesuai provider
+      const filtered = globalData.filter(item => 
+        item.provider && item.provider.toLowerCase() === provider.toLowerCase()
+      );
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 15px;">Tidak ada data untuk ${provider}</div>`;
+        return;
+      }
+
+      // Grouping data berdasarkan "kategori_paket"
+      const groups = {};
+      filtered.forEach(item => {
+        if (!groups[item.kategori_paket]) {
+          groups[item.kategori_paket] = [];
+        }
+        groups[item.kategori_paket].push(item);
+      });
+
+      // Render setiap grup paket sebagai tabel tersendiri
+      for (const groupName in groups) {
+        const groupItems = groups[groupName];
+
+        let html = `
+          <div class="price-group">
+            <div class="group-header">${groupName}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-paket">PAKET</th>
+                  <th class="col-aktif">AKTIF</th>
+                  <th class="col-harga">HARGA</th>
+                </tr>
+              </thead>
+              <tbody>
+        `;
+
+        groupItems.forEach(item => {
+          html += `
+            <tr>
+              <td>• ${item.nama_paket}</td>
+              <td style="text-align:center;">${item.masa_aktif} Hari</td>
+              <td style="text-align:right;">Rp ${item.harga}</td>
+            </tr>
+          `;
+        });
+
+        html += `
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        container.innerHTML += html;
+      }
+    }
+
+    // Inisialisasi awal
+    updateTheme(currentProvider);
+    fetchData();
+
+    // Refresh data otomatis setiap 30 detik untuk real-time update
+    setInterval(fetchData, 30000);
+  </script>
+</body>
+</html>
